@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>anish@production-node:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght=400;500;700&family=Inter:wght=300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
             --bg: #02040a;
@@ -30,7 +30,6 @@
             overflow: hidden;
         }
 
-        /* TOP MONITOR BAR */
         .status-header-bar {
             width: 100%; height: 40px;
             background: #040812;
@@ -50,36 +49,30 @@
             background-color: var(--orange);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--orange);
-            animation: pulseGlow 2s infinite ease-in-out;
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* GRID VIEWPORT ARRANGEMENT */
-        .workspace-grid {
+        /* FLEX SYSTEM RESPONSIVE TO OPEN KEYBOARDS */
+        .workspace-flex-wrapper {
             width: 100%;
-            max-width: 1200px;
-            margin-top: 45px;
+            height: calc(100vh - 40px);
+            margin-top: 40px;
             padding: 10px;
             box-sizing: border-box;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            height: calc(100vh - 55px);
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         @media(min-width: 900px) {
-            .workspace-grid {
-                grid-template-columns: 1fr 1fr;
-                height: calc(100vh - 60px);
+            .workspace-flex-wrapper {
+                flex-direction: row;
+            }
+            .panel-box {
+                flex: 1 !important;
+                height: 100%;
             }
         }
 
-        /* CONTENT CONTAINERS */
         .panel-box {
             background: rgba(7, 13, 25, 0.95);
             border: 1px solid var(--border);
@@ -87,11 +80,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 46vh;
-        }
-
-        @media(min-width: 900px) {
-            .panel-box { max-height: 100%; }
+            flex: 1; /* Automatically balances size dynamically */
+            min-height: 0; 
         }
 
         .panel-tab-bar {
@@ -101,6 +91,7 @@
             display: flex;
             align-items: center;
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
         .tab-pill {
@@ -114,30 +105,35 @@
             padding: 14px;
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             background: var(--panel-inner);
             font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
             line-height: 1.5;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
 
         .terminal-log-output {
             color: #cbd5e1;
             white-space: pre-wrap;
-            word-break: break-word;
+            word-break: break-all;
         }
 
         .input-row {
             display: flex;
             align-items: center;
             width: 100%;
-            margin-top: 8px;
+            margin-top: auto; /* Forces input to stay accessible at bottom */
+            padding-top: 8px;
         }
 
         .terminal-prompt-tag {
             color: var(--purple);
             font-weight: bold;
             margin-right: 6px;
+            white-space: nowrap;
         }
 
         .terminal-input-field {
@@ -148,13 +144,15 @@
             font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
             width: 100%;
+            padding: 0;
+            margin: 0;
         }
 
         .telemetry-stack {
             padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             background: var(--panel-inner);
             box-sizing: border-box;
             flex: 1;
@@ -165,23 +163,23 @@
             background: rgba(3, 7, 18, 0.6);
             border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 10px;
+            padding: 8px;
         }
 
         .chart-header-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-family: 'Fira Code', monospace;
             color: var(--text-dim);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .value-badge { font-weight: 700; }
 
         .svg-container-frame {
             width: 100%;
-            height: 65px;
+            height: 50px;
             background: #020409;
             border-radius: 4px;
             border: 1px solid rgba(30, 41, 59, 0.5);
@@ -189,7 +187,7 @@
 
         .svg-globe-container-frame {
             width: 100%;
-            height: 130px;
+            height: 100px;
             background: #020409;
             border-radius: 4px;
             border: 1px solid rgba(30, 41, 59, 0.5);
@@ -198,15 +196,15 @@
         .realtime-sys-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
         }
 
         .mini-stat-node {
             background: rgba(7, 13, 25, 0.4);
             border: 1px solid rgba(30, 41, 59, 0.4);
             border-radius: 4px;
-            padding: 6px 8px;
-            font-size: 0.68rem;
+            padding: 4px 6px;
+            font-size: 0.65rem;
             font-family: 'Fira Code', monospace;
             display: flex;
             justify-content: space-between;
@@ -217,12 +215,12 @@
             100% { transform: rotate(360deg); }
         }
         .radar-line {
-            transform-origin: 100px 65px;
+            transform-origin: 100px 50px;
             animation: sweep 4s linear infinite;
         }
 
         .neofetch-layout {
-            display: flex; gap: 15px; margin: 10px 0; font-size: 0.75rem;
+            display: flex; gap: 10px; margin: 6px 0; font-size: 0.72rem;
         }
         .neofetch-logo { color: var(--cyan); font-weight: bold; line-height: 1.2; }
 
@@ -244,16 +242,16 @@
         <span id="system-clock-panel">00:00:00 PM</span>
     </div>
 
-    <div class="workspace-grid">
+    <div class="workspace-flex-wrapper">
         <div class="panel-box">
             <div class="panel-tab-bar"><div class="tab-pill">bash_terminal.sh</div></div>
-            <div class="terminal-viewport" id="scroll-engine">
+            <div class="terminal-viewport" id="scroll-engine" onclick="focusInput()">
                 <div class="terminal-log-output" id="console-log-history">Welcome to the real-time node.
 Active Project: Discord Moderation Engineering.
 Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
-                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off">
+                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autocomplete="off" amercapitalize="off" autocorrect="off">
                 </div>
             </div>
         </div>
@@ -268,14 +266,14 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                         <span class="value-badge c-green">SYNCED</span>
                     </div>
                     <div class="svg-globe-container-frame">
-                        <svg viewBox="0 0 200 130" width="100%" height="100%">
-                            <circle cx="100" cy="65" r="50" fill="none" stroke="#1e293b" />
-                            <circle cx="100" cy="65" r="30" fill="none" stroke="#1e293b" />
-                            <line x1="100" y1="5" x2="100" y2="125" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="20" y1="65" x2="180" y2="65" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="100" y1="65" x2="100" y2="15" stroke="var(--cyan)" stroke-width="1.5" class="radar-line" />
-                            <circle cx="75" cy="45" r="3" fill="var(--red)" />
-                            <circle cx="125" cy="85" r="3" fill="var(--orange)" />
+                        <svg viewBox="0 0 200 100" width="100%" height="100%">
+                            <circle cx="100" cy="50" r="40" fill="none" stroke="#1e293b" />
+                            <circle cx="100" cy="50" r="20" fill="none" stroke="#1e293b" />
+                            <line x1="100" y1="5" x2="100" y2="95" stroke="rgba(30, 41, 59, 0.4)" />
+                            <line x1="20" y1="50" x2="180" y2="50" stroke="rgba(30, 41, 59, 0.4)" />
+                            <line x1="100" y1="50" x2="100" y2="10" stroke="var(--cyan)" stroke-width="1.5" class="radar-line" />
+                            <circle cx="80" cy="35" r="2.5" fill="var(--red)" />
+                            <circle cx="120" cy="65" r="2.5" fill="var(--orange)" />
                         </svg>
                     </div>
                 </div>
@@ -288,8 +286,8 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="chart-card">
                     <div class="chart-header-row"><span>Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.40 ms</span></div>
                     <div class="svg-container-frame">
-                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
-                            <path id="svg-latency-line" d="M 0 40 Q 75 20 150 50 T 300 30" fill="none" stroke="var(--cyan)" stroke-width="2" />
+                        <svg viewBox="0 0 300 50" width="100%" height="100%" preserveAspectRatio="none">
+                            <path id="svg-latency-line" d="M 0 30 Q 75 15 150 35 T 300 20" fill="none" stroke="var(--cyan)" stroke-width="2" />
                         </svg>
                     </div>
                 </div>
@@ -297,8 +295,8 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="chart-card">
                     <div class="chart-header-row"><span>Memory Heap</span><span class="value-badge c-purple" id="heap-txt">14.20 MB</span></div>
                     <div class="svg-container-frame">
-                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
-                            <path id="svg-heap-line" d="M 0 30 Q 75 50 150 20 T 300 40" fill="none" stroke="var(--purple)" stroke-width="2" />
+                        <svg viewBox="0 0 300 50" width="100%" height="100%" preserveAspectRatio="none">
+                            <path id="svg-heap-line" d="M 0 20 Q 75 35 150 15 T 300 30" fill="none" stroke="var(--purple)" stroke-width="2" />
                         </svg>
                     </div>
                 </div>
@@ -313,6 +311,13 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
         const scrollEngine = document.getElementById('scroll-engine');
         const clockPanel = document.getElementById('system-clock-panel');
 
+        function focusInput() {
+            terminalTyper.focus();
+        }
+
+        // Keep input focused automatically on startup
+        setTimeout(focusInput, 500);
+
         setInterval(() => { clockPanel.textContent = new Date().toLocaleTimeString(); }, 1000);
 
         setInterval(() => {
@@ -324,14 +329,14 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
             document.getElementById('latency-txt').innerText = lat.toFixed(2) + ' ms';
             document.getElementById('heap-txt').innerText = mem.toFixed(2) + ' MB';
 
-            let p1 = Math.floor(Math.random() * 25 + 15);
-            let p2 = Math.floor(Math.random() * 25 + 25);
-            let p3 = Math.floor(Math.random() * 25 + 15);
+            let p1 = Math.floor(Math.random() * 20 + 15);
+            let p2 = Math.floor(Math.random() * 20 + 20);
+            let p3 = Math.floor(Math.random() * 20 + 15);
             document.getElementById('svg-latency-line').setAttribute('d', `M 0 ${p1} Q 75 ${p2} 150 ${p3} T 300 ${p1}`);
 
-            let h1 = Math.floor(Math.random() * 20 + 25);
-            let h2 = Math.floor(Math.random() * 20 + 15);
-            let h3 = Math.floor(Math.random() * 20 + 25);
+            let h1 = Math.floor(Math.random() * 15 + 20);
+            let h2 = Math.floor(Math.random() * 15 + 15);
+            let h3 = Math.floor(Math.random() * 15 + 20);
             document.getElementById('svg-heap-line').setAttribute('d', `M 0 ${h1} Q 75 ${h2} 150 ${h3} T 300 ${h2}`);
         }, 1000);
 
@@ -391,11 +396,15 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                     logHistory.innerHTML += `\nbash: unrecognized operation: '${base}'`;
                 }
 
-                scrollEngine.scrollTop = scrollEngine.scrollHeight;
+                // Smoothly focus/scroll window view
+                setTimeout(() => {
+                    scrollEngine.scrollTop = scrollEngine.scrollHeight;
+                }, 50);
             }
         });
 
-        document.addEventListener('click', () => { terminalTyper.focus(); });
+        // Event listener to tap anywhere inside terminal to manually trigger keyboard focus
+        document.addEventListener('click', focusInput);
     </script>
 </body>
 </html>
