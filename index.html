@@ -27,12 +27,58 @@
             overflow-x: hidden;
         }
 
+        /* LOADING INTRO SCREEN */
+        #boot-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #02040a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.4s ease;
+        }
+
+        .boot-wrapper {
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .boot-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .premium-loader-track {
+            width: 100%; height: 4px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .premium-loader-bar {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            box-shadow: 0 0 15px var(--cyan);
+            animation: load-execute 1.8s ease-in-out forwards;
+        }
+
+        @keyframes load-execute {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
         /* HARDWARE STATUS TOP ACCENT */
         .status-header-bar {
             width: 100%; height: 35px;
             background: #070d19;
             border-bottom: 1px solid var(--border);
-            position: fixed; top: 0; left: 0; z-index: 1000;
+            position: fixed; top: 0; left: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 15px; font-size: 0.75rem; font-family: 'Fira Code', monospace;
             color: var(--text-dim); box-sizing: border-box;
@@ -51,12 +97,12 @@
 
         /* SPLIT SCREEN WORKSPACE LAYOUT */
         .workspace-grid {
+            display: none;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 15px;
             box-sizing: border-box;
-            display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
             margin-top: 45px;
@@ -189,27 +235,35 @@
 </head>
 <body>
 
+    <div id="boot-screen">
+        <div class="boot-wrapper">
+            <div class="boot-title">INITIALIZING QUANTUM HUB CORE...</div>
+            <div class="premium-loader-track">
+                <div class="premium-loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="status-header-bar">
         <div class="status-indicator">
             <span class="pulse-dot"></span>
-            <span>node_cluster_cluster_017</span>
+            <span>node_cluster_017</span>
         </div>
         <span id="system-clock-panel">00:00:00 PM</span>
     </div>
 
-    <div class="workspace-grid">
+    <div class="workspace-grid" id="main-workspace">
         
         <div class="panel-box">
             <div class="panel-tab-bar">
                 <div class="tab-pill">bash_terminal.sh</div>
             </div>
             <div class="terminal-viewport" id="scroll-engine-box">
-                <div class="terminal-log-output" id="console-log-history">Welcome to the high-fidelity live server mainframe platform.
-* Security Layer: Active session authorization established.
-* Hardware tracking: Connected directly to browser execution hooks.
+                <div class="terminal-log-output" id="console-log-history">Welcome to the advanced live engine infrastructure hub.
+* Telemetry Engine: Real performance tracking API hooks active.
 
-Type <span class="c-cyan">'help'</span> to view target commands.
-Type <span class="c-cyan">'ls'</span> to parse project files.</div>
+Type <span class="c-cyan">'help'</span> to view target tools.
+Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
                 
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
@@ -226,7 +280,7 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
                 
                 <div class="chart-card">
                     <div class="chart-header-row">
-                        <span>Page Script Execution Delay</span>
+                        <span>DOM Script Processing Delay</span>
                         <span class="value-badge c-cyan" id="latency-txt">0.0 ms</span>
                     </div>
                     <canvas id="canvas-latency-chart" class="canvas-render-frame" width="320" height="65"></canvas>
@@ -234,7 +288,7 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
 
                 <div class="chart-card">
                     <div class="chart-header-row">
-                        <span>Active Tab Memory Heap Usage</span>
+                        <span>Allocated Virtual Heap Memory</span>
                         <span class="value-badge c-purple" id="heap-txt">0.00 MB</span>
                     </div>
                     <canvas id="canvas-heap-chart" class="canvas-render-frame" width="320" height="65"></canvas>
@@ -246,35 +300,46 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
     </div>
 
     <script>
+        const bootScreen = document.getElementById('boot-screen');
+        const workspaceGrid = document.getElementById('main-workspace');
         const logHistory = document.getElementById('console-log-history');
         const terminalTyper = document.getElementById('console-terminal-typer');
         const scrollEngine = document.getElementById('scroll-engine-box');
         const clockPanel = document.getElementById('system-clock-panel');
 
-        let latencyBuffer = Array(45).fill(2);
-        let heapBuffer = Array(45).fill(15);
+        let latencyBuffer = Array(45).fill(1);
+        let heapBuffer = Array(45).fill(20);
 
-        // SYNC REAL WALL CLOCK
         setInterval(() => {
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
-        // LIVE HARDWARE METRIC COLLECTION LAYER (REAL PERFORMANCE API HOOKS)
+        // TRANSITION BOOT TIMEOUT
+        setTimeout(() => {
+            bootScreen.style.opacity = '0';
+            setTimeout(() => {
+                bootScreen.style.display = 'none';
+                workspaceGrid.style.display = 'grid';
+                terminalTyper.focus();
+                launchLiveHardwareTelemetry();
+            }, 400);
+        }, 2000);
+
         function launchLiveHardwareTelemetry() {
             const latencyCanvas = document.getElementById('canvas-latency-chart');
             const heapCanvas = document.getElementById('canvas-heap-chart');
+            if(!latencyCanvas || !heapCanvas) return;
+
             const lCtx = latencyCanvas.getContext('2d');
             const hCtx = heapCanvas.getContext('2d');
 
             setInterval(() => {
-                // Measure real execution latency (Time taken to process code within this frame)
                 let markStart = performance.now();
-                for (let i = 0; i < 20000; i++) { let dummy = i * i; } // Brief intentional load
+                for (let i = 0; i < 15000; i++) { let d = i * i; } 
                 let markEnd = performance.now();
                 let actualLatency = markEnd - markStart;
 
-                // Grab actual browser engine allocated heap size memory values if supported, or gracefully mock standard variances
-                let realHeapBytes = window.performance && performance.memory ? performance.memory.usedJSHeapSize : (20 * 1024 * 1024 + (Math.random() * 4 * 1024 * 1024));
+                let realHeapBytes = window.performance && performance.memory ? performance.memory.usedJSHeapSize : (22 * 1024 * 1024 + (Math.random() * 3 * 1024 * 1024));
                 let heapMegabytes = realHeapBytes / (1024 * 1024);
 
                 latencyBuffer.push(actualLatency); latencyBuffer.shift();
@@ -283,23 +348,13 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
                 document.getElementById('latency-txt').innerText = actualLatency.toFixed(2) + ' ms';
                 document.getElementById('heap-txt').innerText = heapMegabytes.toFixed(2) + ' MB';
 
-                // Map raw metric sizes accurately to vector graphics height coordinates
-                renderDynamicTelemetryPath(latencyCanvas, lCtx, latencyBuffer, '#0ea5e9', 8);
+                renderDynamicTelemetryPath(latencyCanvas, lCtx, latencyBuffer, '#0ea5e9', 6);
                 renderDynamicTelemetryPath(heapCanvas, hCtx, heapBuffer, '#8b5cf6', 40);
             }, 300);
         }
 
         function renderDynamicTelemetryPath(canvasObj, ctxObj, dataPoints, strokeColor, maximumYScaleBound) {
             ctxObj.clearRect(0, 0, canvasObj.width, canvasObj.height);
-            
-            // Render tactical radar grid boxes
-            ctxObj.strokeStyle = 'rgba(255,255,255,0.015)';
-            ctxObj.lineWidth = 1;
-            for(let gridY=15; gridY<canvasObj.height; gridY+=15) {
-                ctxObj.beginPath(); ctxObj.moveTo(0, gridY); ctxObj.lineTo(canvasObj.width, gridY); ctxObj.stroke();
-            }
-
-            // Trace path geometry
             ctxObj.beginPath();
             ctxObj.strokeStyle = strokeColor;
             ctxObj.lineWidth = 2;
@@ -307,7 +362,6 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
 
             for (let idx = 0; idx < dataPoints.length; idx++) {
                 let xCoordinate = idx * stepHorizontal;
-                // Calculate percentage altitude mapping boundaries
                 let computedPercentage = Math.min(1, dataPoints[idx] / maximumYScaleBound);
                 let yCoordinate = canvasObj.height - (computedPercentage * canvasObj.height);
                 
@@ -316,14 +370,12 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
             ctxObj.stroke();
         }
 
-        // VIRTUAL INTERNAL FILE DIRECTORY LOGS
         const virtualFS = {
-            "about.txt": `FILE PAYLOAD FOR 'about.txt':\nI am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.\nI build secure infrastructure, manage automation networks, and write clean bash scripts.`,
-            "skills.md": `FILE PAYLOAD FOR 'skills.md':\n- Advanced Community Matrix Layout Design\n- Production Webhook Triggers & Multi-Service Automation Hooking\n- Unix Core Terminal Configurations (Termux Engine Environments)\n- Architecture Coding Layout Blocks (HTML5 / Advanced CSS Blueprints)`,
-            "socials.env": `FILE PAYLOAD FOR 'socials.env':\n- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Run 'connect' to initiate secure forward tracking link)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
+            "about.txt": `I am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.\nI build secure permissions models, configure backend workers, and design advanced dashboard layout schemes.`,
+            "skills.md": `- Production Discord Guild Configuration & Safety Systems\n- Advanced Automation Engine Deployments & API Hooks\n- Linux Bash scripting setups (Termux & Native Virtual Environments)\n- Front-End Web Application Architecture UI Design`,
+            "socials.env": `- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Execute command 'connect' to initiate gateway bridge redirect link)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
         };
 
-        // LINE INPUT EXECUTIVE ENGINE INTERRUPT
         terminalTyper.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const terminalRawLine = terminalTyper.value.trim();
@@ -337,31 +389,28 @@ Type <span class="c-cyan">'ls'</span> to parse project files.</div>
                 const operationalParameter = components.slice(1).join(' ');
 
                 if (baseOpcode === 'help') {
-                    logHistory.innerHTML += `\nRegistered Platform System Executables:\n  <span class="c-cyan">ls</span>      - Survey directory log architecture map\n  <span class="c-cyan">cat</span>     - Dump stream text records inside file tokens\n  <span class="c-cyan">connect</span> - Securely bounce link to primary Discord endpoint gateway\n  <span class="c-cyan">clear</span>   - Flush tracking console line logs from viewport`;
+                    logHistory.innerHTML += `\nRegistered Mainframe Shell Directives:\n  <span class="c-cyan">ls</span>      - Survey available record logs\n  <span class="c-cyan">cat</span>     - Dump content block stream inside text targets\n  <span class="c-cyan">connect</span> - Engage automatic proxy forward link to Discord node\n  <span class="c-cyan">clear</span>   - Flush tracking lines out of current active view viewport`;
                 } else if (baseOpcode === 'ls') {
                     logHistory.innerHTML += `\n` + Object.keys(virtualFS).map(file => `<span class="c-cyan">${file}</span>`).join('    ');
                 } else if (baseOpcode === 'cat') {
                     if (virtualFS[operationalParameter.toLowerCase()]) {
                         logHistory.innerHTML += `\n` + virtualFS[operationalParameter.toLowerCase()];
                     } else {
-                        logHistory.innerHTML += `\n<span class="c-dim">File entity index matching '${operationalParameter}' not found. Usage: cat about.txt</span>`;
+                        logHistory.innerHTML += `\n<span class="c-dim">File parameter match not found for: '${operationalParameter}'. Check usage layout maps via 'ls'.</span>`;
                     }
                 } else if (baseOpcode === 'connect') {
-                    logHistory.innerHTML += `\n🔗 Opening proxy redirection gate to Discord server...`;
+                    logHistory.innerHTML += `\n🔗 Dispatching proxy gateway request. Establishing contact route hook...`;
                     setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 800);
                 } else if (baseOpcode === 'clear') {
-                    logHistory.innerHTML = 'Workspace pipeline log history cleared.';
+                    logHistory.innerHTML = 'Terminal tracking log space cleared.';
                 } else {
-                    logHistory.innerHTML += `\nbash: operational binary string match not found: ${baseOpcode}`;
+                    logHistory.innerHTML += `\nbash: script parser error: command instruction string unmapped: '${baseOpcode}'`;
                 }
 
-                // Force layout auto-scroll down to latest instruction line
                 scrollEngine.scrollTop = scrollEngine.scrollHeight;
             }
         });
 
-        // AUTO-FOCUS CONTROLLER
-        window.onload = launchLiveHardwareTelemetry;
         document.addEventListener('click', () => terminalTyper.focus());
     </script>
 </body>
