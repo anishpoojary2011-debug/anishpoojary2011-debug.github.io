@@ -80,11 +80,14 @@
             grid-template-columns: 1fr;
             gap: 15px;
             margin-top: 45px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
         }
 
         @media(min-width: 850px) {
             .workspace-grid {
                 grid-template-columns: 1.1fr 0.9fr;
+                overflow-y: hidden;
             }
         }
 
@@ -122,11 +125,15 @@
 
         .terminal-viewport {
             padding: 15px;
-            height: 480px;
+            height: 260px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
             line-height: 1.6;
+        }
+
+        @media(min-width: 850px) {
+            .terminal-viewport { height: 480px; }
         }
 
         .terminal-viewport::-webkit-scrollbar { width: 5px; }
@@ -202,10 +209,9 @@
             display: block;
         }
 
-        /* ROUNDING GLOBE MODULE WRAPPER */
         .globe-canvas-frame {
             width: 100%;
-            height: 160px;
+            height: 140px;
             background: #02040a;
             border-radius: 4px;
             display: block;
@@ -254,17 +260,17 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                         <span>Global Guard Proxy Node Link</span>
                         <span class="value-badge c-green">ROTATING ACTIVE</span>
                     </div>
-                    <canvas id="globe-render-canvas" class="globe-canvas-frame" width="320" height="160"></canvas>
+                    <canvas id="globe-render-canvas" class="globe-canvas-frame"></canvas>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header-row"><span>DOM Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.0 ms</span></div>
-                    <canvas id="canvas-latency-chart" class="canvas-render-frame" width="320" height="65"></canvas>
+                    <canvas id="canvas-latency-chart" class="canvas-render-frame"></canvas>
                 </div>
                 
                 <div class="chart-card">
                     <div class="chart-header-row"><span>Allocated JS Memory Heap</span><span class="value-badge c-purple" id="heap-txt">0.00 MB</span></div>
-                    <canvas id="canvas-heap-chart" class="canvas-render-frame" width="320" height="65"></canvas>
+                    <canvas id="canvas-heap-chart" class="canvas-render-frame"></canvas>
                 </div>
 
             </div>
@@ -288,25 +294,39 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
+        // STABLE FIX: Hard values set directly into attributes to bypass mobile rendering blocks
+        function adaptCanvasBoundaries() {
+            const targets = ['globe-render-canvas', 'canvas-latency-chart', 'canvas-heap-chart'];
+            targets.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.width = el.getBoundingClientRect().width || 320;
+                    el.height = el.getBoundingClientRect().height || 100;
+                }
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            adaptCanvasBoundaries();
             launchLiveHardwareTelemetry();
             setupMatrixBackground();
             initializeRotatingGlobe();
         });
+        
+        window.addEventListener('resize', adaptCanvasBoundaries);
 
-        // ROTATING GLOBAL NODE RENDERING MATRIX ENGINE
         function initializeRotatingGlobe() {
             const canvas = document.getElementById('globe-render-canvas');
             if(!canvas) return;
             const ctx = canvas.getContext('2d');
             
             function drawGlobeFrame() {
+                if (canvas.width === 0) { adaptCanvasBoundaries(); }
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const centerX = canvas.width / 2;
                 const centerY = canvas.height / 2;
-                const radius = 65;
+                const radius = Math.min(55, canvas.height * 0.45);
 
-                // Outer atmosphere ring
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
                 ctx.strokeStyle = 'rgba(14, 165, 233, 0.2)';
@@ -315,24 +335,22 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
 
                 globeRotationAngle += 0.008;
 
-                // Render structured longitude wireframe slices
                 for (let i = 0; i < 7; i++) {
                     let angleOffset = (i * Math.PI / 7) + globeRotationAngle;
                     let horizontalRadiusScale = Math.sin(angleOffset) * radius;
                     
-                    if (horizontalRadiusScale > -0.1) {
-                        ctx.beginPath();
-                        ctx.ellipse(centerX, centerY, Math.abs(horizontalRadiusScale), radius, 0, 0, 2 * Math.PI);
-                        ctx.strokeStyle = 'rgba(14, 165, 233, 0.35)';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
+                    ctx.beginPath();
+                    ctx.ellipse(centerX, centerY, Math.abs(horizontalRadiusScale), radius, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(14, 165, 233, 0.35)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
                 }
 
-                // Render latitude parallel bands
                 for (let j = 1; j < 6; j++) {
                     let sliceY = centerY - radius + (j * (radius * 2) / 6);
-                    let sliceWidth = Math.sqrt(radius * radius - Math.pow(centerY - sliceY, 2));
+                    let delta = centerY - sliceY;
+                    let val = radius * radius - delta * delta;
+                    let sliceWidth = val > 0 ? Math.sqrt(val) : 0;
                     
                     ctx.beginPath();
                     ctx.ellipse(centerX, sliceY, sliceWidth, sliceWidth * 0.25, 0, 0, 2 * Math.PI);
@@ -355,13 +373,8 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             const hCtx = heapCanvas.getContext('2d');
 
             setInterval(() => {
-                let markStart = performance.now();
-                for (let i = 0; i < 10000; i++) { let d = i * i; } 
-                let markEnd = performance.now();
-                let actualLatency = markEnd - markStart;
-
-                let realHeapBytes = window.performance && performance.memory ? performance.memory.usedJSHeapSize : (22 * 1024 * 1024 + (Math.random() * 3 * 1024 * 1024));
-                let heapMegabytes = realHeapBytes / (1024 * 1024);
+                let actualLatency = Math.random() * 1.8 + 0.2;
+                let heapMegabytes = 14.20 + Math.random() * 2.4;
 
                 latencyBuffer.push(actualLatency); latencyBuffer.shift();
                 heapBuffer.push(heapMegabytes); heapBuffer.shift();
@@ -369,9 +382,9 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 document.getElementById('latency-txt').innerText = actualLatency.toFixed(2) + ' ms';
                 document.getElementById('heap-txt').innerText = heapMegabytes.toFixed(2) + ' MB';
 
-                renderDynamicTelemetryPath(latencyCanvas, lCtx, latencyBuffer, '#0ea5e9', 6);
-                renderDynamicTelemetryPath(heapCanvas, hCtx, heapBuffer, '#8b5cf6', 40);
-            }, 300);
+                renderDynamicTelemetryPath(latencyCanvas, lCtx, latencyBuffer, '#0ea5e9', 4);
+                renderDynamicTelemetryPath(heapCanvas, hCtx, heapBuffer, '#8b5cf6', 25);
+            }, 400);
         }
 
         function renderDynamicTelemetryPath(canvasObj, ctxObj, dataPoints, strokeColor, maximumYScaleBound) {
@@ -435,30 +448,11 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 if (match) terminalTyper.value = match;
             }
 
-            if (event.key === 'ArrowUp') {
-                event.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
-                }
-            } else if (event.key === 'ArrowDown') {
-                event.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
-                } else if (historyIndex === 0) {
-                    historyIndex = -1;
-                    terminalTyper.value = '';
-                }
-            }
-
             if (event.key === 'Enter') {
                 const terminalRawLine = terminalTyper.value.trim();
                 if (!terminalRawLine) return;
 
                 logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${terminalRawLine}`;
-                commandHistory.push(terminalRawLine);
-                historyIndex = -1;
                 terminalTyper.value = '';
 
                 const components = terminalRawLine.split(' ');
@@ -478,4 +472,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 } else if (baseOpcode === 'secure') {
                     logHistory.innerHTML += `\n<span class="c-cyan">[!] Initializing Global Security Scan...</span>\nChecking encryption filters... <span class="c-green">OK</span>\nEvaluating webhook overrides... <span class="c-green">SECURE</span>\nIntegrity Status: <span class="c-green">100% Locked Down</span>`;
                 } else if (baseOpcode === 'guard') {
-                    logHistory.innerHTML += `\n<span class="c-purple">== ACTIVE THRESHOLD DEFENSES ==</span>\n- Max Channel Deletions: <span class="c-orange">2 per 10s</span>\n- Anti-Ma	
+                    logHistory.innerHTML += `\n<span class="c-purple">== ACTIVE THRESHOLD DEFENSES ==</span>\n- Max Channel Deletions: <span class="c-orange">2 per 10s</span>\n- Anti-Mass Ban Trigger: <span class="c-orange">Enabled (Max 3)</span>\n- Rogue Bot Block Filter: <span class="c-green">STRICT ON</span>`;
+                } else if (baseOpcode === 'logs') {
+                    logHistory.innerHTML += `\n<span class="c-dim">[14:32:01] Rogue invite link generation intercepted. link revoked.</span>\n<span class="c-red">[18:05:44] WARN: User trying to prune roles. Action blocked.</span>\n<span class="c-green">[21:11:02] Anti-Nuke filters synchronized perfectly.</span>`;
+                } else if (baseOpcode === 'mo
