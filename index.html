@@ -26,6 +26,18 @@
             overflow: hidden;
         }
 
+        /* --- CRT MONITOR SCREEN EFFECTS --- */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 99999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
         /* --- HARDWARE BOOT SCREEN --- */
         #boot-screen {
             position: fixed;
@@ -125,13 +137,12 @@
 
         .ascii-banner {
             color: var(--matrix-green);
-            font-size: 0.72rem;
+            font-size: 0.85rem;
             line-height: 1.2;
             white-space: pre;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: bold;
             text-shadow: 0 0 4px var(--matrix-green);
-            overflow-x: auto;
         }
 
         .welcome-text {
@@ -228,15 +239,15 @@
         <div class="terminal-container">
             
             <div class="ascii-banner">
-████ ANISH █████████████████████████████████
-██  ███  ██   ████   █████   ████  ██   ████
-██   ██  ██  █  ██  █   ████  ███  ██  █   █
-██  █ █  ██  █████  ████████  ███  ██  █████
-██  ██   ██  █  ██  █   ████  ███  ██  █   █
-██  ███  ██  █  ██   ██████  ████  ██   ████
-████████████████████████████████████████████</div>
+ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄   ▄▄ 
+█       █       █       █       █  █ █  █
+█   ▄   █   ▄   █   ▄   █       █  █▄█  █
+█  █▄█  █  █ █  █  █ █  █   ▄   █       █
+█       █  █ █  █  █▄█  █  █ █  █   ▄   █
+█   ▄   █  █ █  █       █  █▄█  █  █ █  █
+█▄▄█ █▄▄█▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄█ █▄▄█</div>
 
-            <div id="banner-view" class="welcome-text">📊 CORE SHELL OVERRIDE GRANTED.
+            <div id="banner-view" class="welcome-text"> Bars CORE SHELL OVERRIDE GRANTED.
 🔒 CREDENTIAL NODE: guest@anish_gateway
 💡 Type <span class="blue-text">'help'</span> to pull secure directory trees. Type <span class="blue-text">'matrix'</span> for background stream.</div>
 
@@ -287,7 +298,7 @@
             }, 400);
         }, 2300);
 
-        // Maxed-out Command Registry
+        // Command Registry
         const commands = {
             help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">system</span>   - Inspect terminal kernel metrics & hardware resources\n  <span class="blue-text">sudo</span>     - Attempt root privilege execution mode\n  <span class="blue-text">contact</span>  - Pull request protocol for business inquiries\n  <span class="blue-text">motd</span>     - Display system message of the day\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
             about: `ABOUT SYSTEM:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Architect. I build automated workflows, configure backend logic structures, and secure public communication channels.`,
@@ -372,7 +383,6 @@
                 playBeep(380 + Math.random() * 80, 0.02, 'triangle', 0.05);
             }
 
-            // Quick Double Space Tab Completion Setup
             if (event.key === ' ') {
                 const now = Date.now();
                 if (now - lastSpacePress < 300) {
