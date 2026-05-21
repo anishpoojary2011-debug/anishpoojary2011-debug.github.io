@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anish | Portfolio Gateway</title>
+    <title>anish@mainframe:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;700&display=swap');
         
         :root {
-            --bg: #070a10;
-            --text: #cbd5e1;
-            --matrix-green: #39ff14;
-            --prompt-color: #475569;
+            --bg-gradient: radial-gradient(circle at 50% 50%, #0d1527 0%, #050814 100%);
+            --panel-bg: rgba(15, 23, 42, 0.65);
+            --border-color: rgba(56, 189, 248, 0.2);
+            --neon-blue: #0ea5e9;
+            --neon-cyan: #38bdf8;
+            --neon-purple: #a855f7;
+            --matrix-green: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
         }
 
         body, html {
@@ -19,258 +29,348 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Fira Code', monospace;
-            box-sizing: border-box;
-            overflow: hidden;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        /* --- CRT MONITOR SCREEN EFFECTS --- */
-        body::after {
+        /* CRT SCANLINE REFINEMENT */
+        body::before {
             content: " ";
             display: block;
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 99999;
-            background-size: 100% 4px, 6px 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            z-index: 9999;
+            background-size: 100% 4px;
             pointer-events: none;
+            opacity: 0.3;
         }
 
-        /* --- HARDWARE BOOT SCREEN --- */
+        /* STATUS TOP BAR */
+        .desktop-top-bar {
+            width: 100%;
+            height: 35px;
+            background: rgba(10, 15, 30, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .status-cluster {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pulse-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-cyan);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 12px var(--neon-cyan);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* LOADING INTRO SCREEN */
         #boot-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #05070a;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #02040a;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
             transition: opacity 0.4s ease;
         }
 
-        .boot-container {
-            width: 85%;
-            max-width: 450px;
+        .boot-wrapper {
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
         }
 
-        .boot-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            color: #334155;
+        .boot-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
         }
 
-        .progress-bar-container {
-            width: 100%;
-            height: 3px;
-            background-color: #1e293b;
-            margin-bottom: 25px;
-            position: relative;
+        .premium-loader-track {
+            width: 100%; height: 4px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
             overflow: hidden;
         }
 
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: var(--matrix-green);
-            box-shadow: 0 0 10px var(--matrix-green);
-            animation: load 2.2s cubic-bezier(0.1, 0.75, 0.25, 1) forwards;
+        .premium-loader-bar {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 15px var(--neon-blue);
+            animation: load-execute 1.8s ease-in-out forwards;
         }
 
-        .status-msg {
-            color: var(--matrix-green);
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 3px;
-            margin-bottom: 35px;
-            font-weight: bold;
-            text-shadow: 0 0 6px var(--matrix-green);
-        }
-
-        .system-checks {
-            font-size: 0.8rem;
-            color: #475569;
-            line-height: 2;
-        }
-
-        .check-item {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .check-ok {
-            color: var(--matrix-green);
-            font-weight: bold;
-        }
-
-        @keyframes load {
+        @keyframes load-execute {
             0% { width: 0%; }
-            40% { width: 45%; }
-            70% { width: 85%; }
             100% { width: 100%; }
         }
 
-        /* --- CORE BASH WORKSPACE --- */
-        #main-terminal {
+        /* MAIN APPS LAYOUT CONTAINER */
+        #workspace-layer {
             display: none;
             width: 100%;
-            height: 100%;
-            padding: 20px;
+            height: calc(100% - 35px);
+            margin-top: 35px;
+            padding: 15px;
             overflow-y: auto;
             box-sizing: border-box;
-            position: relative;
-            z-index: 2;
         }
 
-        .terminal-container {
+        .grid-blueprint {
             width: 100%;
-            max-width: 750px;
-            margin: 10px auto 0 auto;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
-        .ascii-banner {
-            color: var(--matrix-green);
+        @media(min-width: 768px) {
+            .grid-blueprint {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+
+        /* GLASS CARD CONTAINERS */
+        .premium-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* CONSOLE INNER VIEWPORT */
+        .terminal-viewport {
+            height: 320px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
-            line-height: 1.2;
-            white-space: pre;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-shadow: 0 0 4px var(--matrix-green);
+            line-height: 1.5;
         }
 
-        .welcome-text {
-            color: #64748b;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
+        .terminal-viewport::-webkit-scrollbar { width: 4px; }
+        .terminal-viewport::-webkit-scrollbar-thumb { background: var(--border-color); }
 
-        .output-history {
-            white-space: pre-wrap;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-        }
+        .history-output { color: #cbd5e1; white-space: pre-wrap; }
 
-        .terminal-input-line {
+        .input-line-wrapper {
             display: flex;
             align-items: center;
             width: 100%;
-            padding-bottom: 80px;
+            margin-top: 8px;
         }
 
-        .prompt {
-            color: var(--prompt-color);
-            margin-right: 10px;
+        .shell-prompt {
+            color: var(--neon-purple);
+            font-weight: 700;
+            margin-right: 8px;
             white-space: nowrap;
-            font-weight: bold;
         }
 
-        #terminal-typer {
+        .shell-dir { color: var(--neon-cyan); }
+
+        .terminal-input-engine {
             background: transparent;
             border: none;
             outline: none;
-            color: var(--matrix-green);
+            color: var(--text-primary);
             font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             width: 100%;
-            text-shadow: 0 0 3px var(--matrix-green);
         }
 
-        .command-response {
-            color: #e2e8f0;
-            margin-bottom: 20px;
+        /* LIVE HARDWARE GRAPH WIDGETS */
+        .telemetry-node {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        
-        .blue-text { color: #0ea5e9; font-weight: bold; }
-        .yellow-text { color: #f59e0b; }
-        .red-text { color: #f43f5e; }
 
-        /* --- MATRIX DATA STREAM OVERLAY --- */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            display: none;
-            opacity: 0.25;
-            pointer-events: none;
+        .widget-block {
+            background: rgba(10, 15, 28, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 12px;
         }
+
+        .widget-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .widget-value { font-weight: 600; color: var(--text-primary); }
+
+        .canvas-graph-render {
+            width: 100%; height: 60px;
+            background: #040712;
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* NEOFTECH CUSTOM DESIGNED ROW */
+        .neofetch-card-layout {
+            display: flex; flex-direction: column; gap: 10px; padding: 5px 0;
+        }
+        @media(min-width: 480px) {
+            .neofetch-card-layout { flex-direction: row; gap: 20px; }
+        }
+
+        .neofetch-avatar-code {
+            color: var(--neon-cyan); font-weight: bold; white-space: pre; font-size: 0.7rem; line-height: 1.1;
+        }
+
+        .neofetch-stats { font-size: 0.8rem; line-height: 1.4; }
+
+        .c-cyan { color: var(--neon-cyan); }
+        .c-purple { color: var(--neon-purple); }
+        .c-green { color: var(--matrix-green); }
+        .c-sec { color: var(--text-secondary); }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
+    <div class="desktop-top-bar">
+        <div class="status-cluster">
+            <span><span class="pulse-indicator"></span> gateway_v7.2</span>
+            <span>SH-5.2</span>
+        </div>
+        <div class="status-cluster">
+            <span id="live-clock-panel">00:00:00 PM</span>
+        </div>
+    </div>
 
     <div id="boot-screen">
-        <div class="boot-container">
-            <div class="boot-header">
-                <span>ANISH_MAINFRAME</span>
-                <span>v4.5.0</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="status-msg">CONNECTING TO HOST...</div>
-            
-            <div class="system-checks">
-                <div class="check-item">
-                    <span>> Node Handshake</span>
-                    <span class="check-ok">CONNECTED</span>
-                </div>
-                <div class="check-item">
-                    <span>> Bash Environment</span>
-                    <span class="check-ok">SECURE</span>
-                </div>
+        <div class="boot-wrapper">
+            <div class="boot-title">INITIALIZING QUANTUM HUB CORE...</div>
+            <div class="premium-loader-track">
+                <div class="premium-loader-bar"></div>
             </div>
         </div>
     </div>
 
-    <div id="main-terminal">
-        <div class="terminal-container">
+    <div id="workspace-layer">
+        <div class="grid-blueprint">
             
-            <div class="ascii-banner">
- ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄   ▄▄ 
-█       █       █       █       █  █ █  █
-█   ▄   █   ▄   █   ▄   █       █  █▄█  █
-█  █▄█  █  █ █  █  █ █  █   ▄   █       █
-█       █  █ █  █  █▄█  █  █ █  █   ▄   █
-█   ▄   █  █ █  █       █  █▄█  █  █ █  █
-█▄▄█ █▄▄█▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄█ █▄▄█</div>
+            <div class="premium-card">
+                <div class="card-header">💻 Core Command Environment</div>
+                <div class="terminal-viewport" id="viewport-scroll-node">
+                    <div class="history-output" id="shell-history-node">Welcome to the advanced command mainframe node interface.
+* Status: Secure frosted sandbox authorization confirmed.
 
-            <div id="banner-view" class="welcome-text"> Bars CORE SHELL OVERRIDE GRANTED.
-🔒 CREDENTIAL NODE: guest@anish_gateway
-💡 Type <span class="blue-text">'help'</span> to pull secure directory trees. Type <span class="blue-text">'matrix'</span> for background stream.</div>
-
-            <div id="history" class="output-history"></div>
-
-            <div class="terminal-input-line">
-                <span class="prompt">guest@anish_terminal:~$</span>
-                <input type="text" id="terminal-typer" autofocus autocomplete="off" placeholder="Type command here..." inputmode="text">
+Type <span class="c-cyan">'help'</span> to see valid operational commands.
+Type <span class="c-cyan">'neofetch'</span> for architectural hardware profiles.</div>
+                    
+                    <div class="input-line-wrapper">
+                        <span class="shell-prompt">anish@gateway:<span class="shell-dir">~</span>$</span>
+                        <input type="text" class="terminal-input-engine" id="shell-typer-node" autofocus autocomplete="off" placeholder="Run terminal query..." inputmode="text">
+                    </div>
+                </div>
             </div>
+
+            <div class="premium-card">
+                <div class="card-header">📊 Real-Time Diagnostic Streams</div>
+                <div class="telemetry-node">
+                    
+                    <div class="widget-block">
+                        <div class="widget-label-row">
+                            <span>CPU Processing Load</span>
+                            <span class="widget-value c-cyan" id="cpu-numerical-display">0%</span>
+                        </div>
+                        <canvas id="canvas-cpu-hud" class="canvas-graph-render" width="300" height="60"></canvas>
+                    </div>
+
+                    <div class="widget-block">
+                        <div class="widget-label-row">
+                            <span>Dynamic Memory Allocation</span>
+                            <span class="widget-value c-purple" id="ram-numerical-display">0%</span>
+                        </div>
+                        <canvas id="canvas-ram-hud" class="canvas-graph-render" width="300" height="60"></canvas>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
         const bootScreen = document.getElementById('boot-screen');
-        const mainTerminal = document.getElementById('main-terminal');
-        const typer = document.getElementById('terminal-typer');
-        const history = document.getElementById('history');
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+        const workspaceLayer = document.getElementById('workspace-layer');
+        const typer = document.getElementById('shell-typer-node');
+        const historyNode = document.getElementById('shell-history-node');
+        const viewportScroll = document.getElementById('viewport-scroll-node');
+        const clockPanel = document.getElementById('live-clock-panel');
 
         let audioCtx = null;
-        
-        function playBeep(freq, duration, type = 'sine', volume = 0.04) {
+        let commandHistoryStack = [];
+        let internalHistoryIndex = -1;
+
+        let cpuPoints = Array(40).fill(20);
+        let ramPoints = Array(40).fill(45);
+
+        const virtualFS = {
+            "about.txt": `ABOUT:\nI am an experienced <span class="c-cyan">Discord Server Manager</span> & Community Architect.\nI design comprehensive automation maps, protect assets, and build complex logic structures.`,
+            "skills.md": `SKILLS MATRIX:\n- Infrastructure Layouts & Permission Matrix Design\n- Custom Bot Automation Pipelines & Webhook Hooking\n- Linux shell configuration (Termux / Native Bash Environment)\n- Modern User Interfaces (Responsive HTML5 / Minimalist CSS Engineering)`,
+            "socials.env": `ENDPOINT LINKS:\n- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Execute 'connect' to initialize bridge redirection)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
+        };
+
+        const operationalBinaryList = ['help', 'ls', 'cat', 'neofetch', 'clear', 'connect', 'whoami', 'date'];
+
+        function updateClockEngine() {
+            clockPanel.textContent = new Date().toLocaleTimeString();
+        }
+        setInterval(updateClockEngine, 1000);
+        updateClockEngine();
+
+        function playSystemAudioBeep(freq, duration, type = 'sine', volume = 0.015) {
             if (!audioCtx) return;
             try {
                 const osc = audioCtx.createOscillator();
@@ -279,174 +379,154 @@
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
                 gain.gain.setValueAtTime(volume, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + duration);
             } catch(e) {}
         }
 
-        // Fast Boot Sequencer
         setTimeout(() => {
             bootScreen.style.opacity = '0';
             setTimeout(() => {
                 bootScreen.style.display = 'none';
-                mainTerminal.style.display = 'block';
-                document.body.style.overflow = 'auto';
+                workspaceLayer.style.display = 'block';
                 typer.focus();
-                playBeep(880, 0.15, 'triangle', 0.1);
+                initializeTelemetryTickingGraphs();
+                playSystemAudioBeep(880, 0.1, 'sine', 0.03);
             }, 400);
-        }, 2300);
+        }, 2000);
 
-        // Command Registry
-        const commands = {
-            help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">system</span>   - Inspect terminal kernel metrics & hardware resources\n  <span class="blue-text">sudo</span>     - Attempt root privilege execution mode\n  <span class="blue-text">contact</span>  - Pull request protocol for business inquiries\n  <span class="blue-text">motd</span>     - Display system message of the day\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
-            about: `ABOUT SYSTEM:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Architect. I build automated workflows, configure backend logic structures, and secure public communication channels.`,
-            skills: `CAPABILITIES:\n- Server Infrastructure Management\n- API Automation & Advanced Discord Integrations\n- Linux Environment Engineering (Termux & Kali Core)\n- Frontend Web Structures (HTML5 / CSS3 Layouts)`,
-            projects: `OPERATIONAL DEPLOYMENTS:\n- <span class="yellow-text">24/7 Discord Automation Bot</span>: Designing persistent operational code routines.\n- <span class="yellow-text">Gateway Routing Server</span>: Managing network permissions, bot logic, and scaling rules.\n- <span class="yellow-text">Terminal Portfolio Webframe</span>: Compiled natively from mobile terminal containers.`,
-            socials: `COMMUNICATION LINKS:\n- <span class="yellow-text">Instagram</span>: @__miku._.chan_\n- <span class="yellow-text">Discord</span>: @anish (Command 'connect' routes instantly)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
-            system: `KERNEL METRICS:\n----------------------------------------\nOS Node: <span class="yellow-text">Termux Web Environment v4.5.0</span>\nCPU Allocation: <span class="matrix-green">[██████░░░░] 58.2%</span>\nRAM Consumption: <span class="matrix-green">2.41 GB / 8.00 GB</span>\nMainframe Uptime: <span class="yellow-text">14 Days, 6 Hours, 12 Mins</span>\nNetwork Ping Link: <span class="matrix-green">14ms (Optimal)</span>\n----------------------------------------`,
-            sudo: `<span class="red-text">❌ USER PRIVILEGE EXCEPTION.</span>\n guest_user is not in the sudoers file. This incident has been logged and reported to the system administrator (@anish).`,
-            contact: `COMMUNICATION PROTOCOL:\nWant to collaborate or hire me for Discord server management / bot configuration?\n\n📩 DM on Instagram: <span class="yellow-text">@__miku._.chan_</span>\n💬 Drop a line in my Discord Server using the <span class="blue-text">'connect'</span> directive.`,
-            motd: `📢 MESSAGE OF THE DAY:\n"The best way to protect any backend node is to configure its automated components flawlessly."\n- Status: Developing 24/7 Automation Bots right from a mobile core.`,
-            whoami: `TRACE INFO:\nUser Node: guest_user\nRoot Host: anish_terminal_core\nShell Type: Interactive Web-Bash\nConnection: Encrypted HTTPS`,
-            date: `MAINFRAME CLOCK:\n${new Date().toString()}`
-        };
+        function initializeTelemetryTickingGraphs() {
+            const cpuCanvas = document.getElementById('canvas-cpu-hud');
+            const ramCanvas = document.getElementById('canvas-ram-hud');
+            const cpuTxt = document.getElementById('cpu-numerical-display');
+            const ramTxt = document.getElementById('ram-numerical-display');
 
-        function printOutputWithEffect(textStr) {
-            const respDiv = document.createElement('div');
-            respDiv.className = 'command-response';
-            history.appendChild(respDiv);
-            
-            const lines = textStr.split('\n');
-            let currentLine = 0;
+            const cCtx = cpuCanvas.getContext('2d');
+            const rCtx = ramCanvas.getContext('2d');
 
-            function printLine() {
-                if (currentLine < lines.length) {
-                    respDiv.innerHTML += lines[currentLine] + '<br>';
-                    if (audioCtx) {
-                        playBeep(550, 0.02, 'square', 0.02);
-                    }
-                    currentLine++;
-                    setTimeout(printLine, 25);
-                    mainTerminal.scrollTop = mainTerminal.scrollHeight;
+            setInterval(() => {
+                let nextCPU = Math.max(5, Math.min(95, cpuPoints[cpuPoints.length - 1] + (Math.random() * 20 - 10)));
+                let nextRAM = Math.max(40, Math.min(70, ramPoints[ramPoints.length - 1] + (Math.random() * 4 - 2)));
+
+                cpuPoints.push(nextCPU); cpuPoints.shift();
+                ramPoints.push(nextRAM); ramPoints.shift();
+
+                cpuTxt.innerText = Math.floor(nextCPU) + '%';
+                ramTxt.innerText = Math.floor(nextRAM) + '%';
+
+                drawVectorTelemetryPath(cpuCanvas, cCtx, cpuPoints, '#0ea5e9');
+                drawVectorTelemetryPath(ramCanvas, rCtx, ramPoints, '#a855f7');
+            }, 250);
+        }
+
+        function drawVectorTelemetryPath(canvasObj, ctxObj, dataArray, colorStroke) {
+            ctxObj.clearRect(0, 0, canvasObj.width, canvasObj.height);
+            ctxObj.beginPath();
+            ctxObj.strokeStyle = colorStroke;
+            ctxObj.lineWidth = 2;
+            const xDeltaStep = canvasObj.width / (dataArray.length - 1);
+
+            for (let i = 0; i < dataArray.length; i++) {
+                let currentX = i * xDeltaStep;
+                let currentY = canvasObj.height - (dataArray[i] / 100 * canvasObj.height);
+                if (i === 0) ctxObj.moveTo(currentX, currentY); else ctxObj.lineTo(currentX, currentY);
+            }
+            ctxObj.stroke();
+        }
+
+        function streamTerminalResponse(textPayload, isHTML = false) {
+            const blockContainer = document.createElement('div');
+            blockContainer.style.marginBottom = '10px';
+            historyNode.appendChild(blockContainer);
+
+            if (isHTML) {
+                blockContainer.innerHTML = textPayload;
+                viewportScroll.scrollTop = viewportScroll.scrollHeight;
+                return;
+            }
+
+            const messageLines = textPayload.split('\n');
+            let arrayIndex = 0;
+
+            function processLineStream() {
+                if (arrayIndex < messageLines.length) {
+                    blockContainer.innerHTML += messageLines[arrayIndex] + '<br>';
+                    if (audioCtx) playSystemAudioBeep(600, 0.008, 'square', 0.004);
+                    arrayIndex++;
+                    setTimeout(processLineStream, 15);
+                    viewportScroll.scrollTop = viewportScroll.scrollHeight;
                 }
             }
-            printLine();
+            processLineStream();
         }
 
-        // --- MATRIX CANVAS LAYER ---
-        let matrixInterval;
-        function toggleMatrixRain() {
-            if (canvas.style.display === 'block') {
-                canvas.style.display = 'none';
-                clearInterval(matrixInterval);
-                return "Matrix background stream deactivated.";
-            }
+        const neofetchHTMLPayload = `
+<div class="neofetch-card-layout">
+<div class="neofetch-avatar-code">
+ 🌌█████╗ ███╗   ██╗██╗██████╗ 
+██╔══██╗████╗  ██║██║██╔══██╗
+███████║██╔██╗ ██║██║██████╔╝
+██╔══██║██║╚██╗██║██║██╔═══╝ 
+██║  ██║██║ ╚████║██║██║     
+╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     </div>
+<div class="neofetch-stats">
+<span class="c-cyan">anish</span>@<span class="c-cyan">premium_mainframe_node</span><br>
+<span class="c-sec">-----------------------------------</span><br>
+<span class="c-purple">Environment</span>: Premium Cyberpunk UI v7.2<br>
+<span class="c-purple">Kernel Engine</span>: Virtual WebKit Canvas Core<br>
+<span class="c-purple">Uptime Monitor</span>: 2 hours, 14 mins<br>
+<span class="c-purple">Shell Binary</span>: Interactive Javascript Custom Bash<br>
+<span class="c-purple">System Clocks</span>: 8 Core ARM Virtual Simulation Array
+</div>
+</div>`;
 
-            canvas.style.display = 'block';
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            const letters = '0123456789ABCDEF';
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
-
-            function draw() {
-                ctx.fillStyle = 'rgba(7, 10, 16, 0.06)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#39ff14';
-                ctx.font = fontSize + 'px monospace';
-
-                for (let i = 0; i < drops.length; i++) {
-                    const text = letters[Math.floor(Math.random() * letters.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            matrixInterval = setInterval(draw, 33);
-            return "Matrix stream activated successfully.";
-        }
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        let lastSpacePress = 0;
         typer.addEventListener('keydown', function(event) {
             if (event.key.length === 1 && audioCtx) {
-                playBeep(380 + Math.random() * 80, 0.02, 'triangle', 0.05);
+                playSystemAudioBeep(500 + Math.random() * 50, 0.015, 'triangle', 0.01);
             }
 
-            if (event.key === ' ') {
-                const now = Date.now();
-                if (now - lastSpacePress < 300) {
-                    event.preventDefault();
-                    const currentInput = typer.value.trim().toLowerCase();
-                    const match = Object.keys(commands).concat(['clear', 'connect', 'matrix']).find(c => c.startsWith(currentInput));
-                    if (match) {
-                        typer.value = match;
-                    }
-                    return;
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const inputString = typer.value.trim();
+                if (!inputString) return;
+                const stringTokens = inputString.split(' ');
+
+                if (stringTokens.length === 1) {
+                    const match = operationalBinaryList.find(bin => bin.startsWith(stringTokens[0].toLowerCase()));
+                    if (match) typer.value = match;
+                } else if (stringTokens[0].toLowerCase() === 'cat' && stringTokens.length === 2) {
+                    const fileMatch = Object.keys(virtualFS).find(file => file.startsWith(stringTokens[1].toLowerCase()));
+                    if (fileMatch) typer.value = `cat ${fileMatch}`;
                 }
-                lastSpacePress = now;
+                return;
+            }
+
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (commandHistoryStack.length > 0 && internalHistoryIndex < commandHistoryStack.length - 1) {
+                    internalHistoryIndex++;
+                    typer.value = commandHistoryStack[commandHistoryStack.length - 1 - internalHistoryIndex];
+                }
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (internalHistoryIndex > 0) {
+                    internalHistoryIndex--;
+                    typer.value = commandHistoryStack[commandHistoryStack.length - 1 - internalHistoryIndex];
+                } else if (internalHistoryIndex === 0) {
+                    internalHistoryIndex = -1;
+                    typer.value = '';
+                }
             }
 
             if (event.key === 'Enter') {
-                initAudio();
-                const input = typer.value.trim().toLowerCase();
-                if (input === '') return;
+                initializeAudioSandbox();
+                const processedInputLine = typer.value.trim();
+                if (processedInputLine === '') return;
 
-                history.innerHTML += `<div><span class="prompt">guest@anish_terminal:~$</span> ${typer.value}</div>`;
-                
-                if (input === 'clear') {
-                    history.innerHTML = '';
-                    typer.value = '';
-                    return;
-                }
-                
-                if (input === 'connect' || input === 'discord') {
-                    printOutputWithEffect(`🔗 Opening secure gateway to Discord server instance...`);
-                    setTimeout(() => {
-                        window.location.href = "https://discord.gg/wwqtGYu7q";
-                    }, 800);
-                    typer.value = '';
-                    return;
-                }
+                commandHistoryStack.push(processedInputLine);
+                internalHistoryIndex = -1;
 
-                let response = '';
-                if (input === 'matrix') {
-                    response = toggleMatrixRain();
-                } else if (commands[input]) {
-                    response = commands[input];
-                } else {
-                    response = `<span class="red-text">Error: Directive '${input}' unrecognized. Type 'help' for layout map.</span>`;
-                    if (audioCtx) playBeep(200, 0.2, 'sawtooth', 0.08);
-                }
-
-                printOutputWithEffect(response);
+                historyNode.innerHTML += `<div><span class="shell-prompt">anish@gateway:<span class="shell-dir">~</span>$</span> ${processedInputLine}</div>`;
                 typer.value = '';
-            }
-        });
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        document.addEventListener('click', () => {
-            initAudio();
-            typer.focus();
-        });
-    </script>
-</body>
-</html>
+                const lineTokens = processedInputLin
