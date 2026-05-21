@@ -3,25 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anish - Matrix Core</title>
+    <title>Anish | Portfolio Gateway</title>
     <style>
-        body { background-color: #000000; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; text-align: center; }
-        .terminal { border: 2px solid #00ff41; padding: 25px; margin-top: 50px; background: rgba(0,5,0,0.9); box-shadow: 0 0 15px #00ff41; }
-        h1 { text-shadow: 0 0 10px #00ff41; }
-        .btn { display: block; border: 1px solid #00ff41; color: #00ff41; padding: 10px; margin: 10px; text-decoration: none; font-weight: bold; }
-        .btn:hover { background: #00ff41; color: #000000; }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+        
+        :root {
+            --bg: #0b0f12;
+            --text: #cbd5e1;
+            --matrix-green: #00ff66;
+            --prompt-color: #64748b;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+
+        .welcome-text {
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px var(--matrix-green);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .output-history {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .prompt {
+            color: var(--prompt-color);
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        #terminal-typer {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--matrix-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            width: 100%;
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        .command-response {
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+        
+        .blue-text { color: #38bdf8; }
+        .yellow-text { color: #f59e0b; }
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <h1>[ ANISH ]</h1>
-        <p>> DISCORD SERVER MANAGER</p>
-        <p>> STATUS: ACTIVE_</p>
-        <a href="https://discord.gg/wwqtGYu7q" class="btn">[ CONNECT / JOIN SERVER ]</a>
+
+    <div class="terminal-container">
+        <div class="welcome-text">
+==================================================
+📊 ANISH PORTFOLIO SYSTEM [Version 3.0.0]
+🔒 STATUS: SECURE_
+💡 Type 'help' to view available commands.
+==================================================
+        </div>
+
+        <div id="history" class="output-history"></div>
+
+        <div class="terminal-input-line">
+            <span class="prompt">guest@anish_terminal:~$</span>
+            <input type="text" id="terminal-typer" autofocus autocomplete="off" placeholder="Type here...">
+        </div>
     </div>
+
+    <script>
+        const typer = document.getElementById('terminal-typer');
+        const history = document.getElementById('history');
+
+        // Commands Database
+        const commands = {
+            help: `Available Commands:\n  <span class="blue-text">about</span>    - Learn more about me\n  <span class="blue-text">skills</span>   - View my technical skill set\n  <span class="blue-text">projects</span> - See my active work & Discord servers\n  <span class="blue-text">clear</span>    - Clear the terminal screen`,
+            about: `ABOUT ME:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Builder. I specialize in setting up secure backend systems, automation bots, and moderation workflows to keep communities active and safe.`,
+            skills: `TECHNICAL SKILLS:\n- Community Management & Moderation\n- Discord API & Advanced Bot Integrations\n- Linux Environment Operations (Termux / Kali Linux)\n- Basic Frontend Web Development (HTML / CSS)`,
+            projects: `ACTIVE PROJECTS:\n- <span class="yellow-text">Community Server Gateway</span>: Active management, bot routing, and custom roles.\n- <span class="yellow-text">Personal Portfolio</span>: Built directly from a mobile device container.`
+        };
+
+        typer.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const input = typer.value.trim().toLowerCase();
+                
+                if (input === '') return;
+
+                // Log the command into history
+                let response = '';
+                if (input === 'clear') {
+                    history.innerHTML = '';
+                    typer.value = '';
+                    return;
+                } else if (commands[input]) {
+                    response = commands[input];
+                } else {
+                    response = `<span style="color: #ef4444;">Command not found: '${input}'. Type 'help' for a list of commands.</span>`;
+                }
+
+                history.innerHTML += `<div><span class="prompt">guest@anish_terminal:~$</span> ${typer.value}</div>`;
+                history.innerHTML += `<div class="command-response">${response}</div>`;
+                
+                // Reset input field and scroll to bottom
+                typer.value = '';
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+    </script>
+
 </body>
-<div class="terminal-input-line">
-    <span class="prompt">guest@matrix_gateway:~$</span>
-    <input type="text" id="terminal-typer" autofocus placeholder=" Type here..." autocomplete="off">
-</div>
 </html>
