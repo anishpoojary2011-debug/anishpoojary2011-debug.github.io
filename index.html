@@ -41,7 +41,6 @@
             pointer-events: none;
         }
 
-        /* LIVE SYSTEM MONITOR BAR */
         .status-header-bar {
             width: 100%; height: 40px;
             background: #040812;
@@ -128,7 +127,7 @@
 
         .terminal-viewport {
             padding: 18px;
-            height: 280px;
+            height: 250px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
@@ -183,7 +182,6 @@
             flex-direction: column;
             gap: 12px;
             background: var(--panel-inner);
-            height: 100%;
             box-sizing: border-box;
         }
 
@@ -211,6 +209,7 @@
             font-family: 'Fira Code', monospace;
         }
 
+        /* HARD HARDWARE DIMENSIONS ASSURED VIA CSS LAYERING */
         .canvas-render-frame {
             width: 100%;
             height: 75px;
@@ -218,6 +217,7 @@
             border-radius: 6px;
             border: 1px solid rgba(30, 41, 59, 0.5);
             display: block;
+            box-sizing: border-box;
         }
 
         .globe-canvas-frame {
@@ -227,9 +227,9 @@
             border-radius: 6px;
             border: 1px solid rgba(30, 41, 59, 0.5);
             display: block;
+            box-sizing: border-box;
         }
 
-        /* GRID INFO LAYOUT */
         .realtime-sys-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -291,7 +291,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 <div class="chart-card">
                     <div class="chart-header-row">
                         <span>Global Threat Proxy Intercept Nodes</span>
-                        <span class="value-badge c-green" id="globe-status">SCANNING SYNCED</span>
+                        <span class="value-badge c-green">SCANNING SYNCED</span>
                     </div>
                     <canvas id="globe-render-canvas" class="globe-canvas-frame"></canvas>
                 </div>
@@ -333,32 +333,34 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         let globeRotationAngle = 0;
         let scanLinePos = 0;
 
-        // Clock tracking loop
         setInterval(() => {
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
-        // Dynamic System Status Simulators
         setInterval(() => {
             document.getElementById('stat-cpu').innerText = (Math.random() * 18 + 8).toFixed(1) + '%';
             document.getElementById('stat-packets').innerText = Math.floor(Math.random() * 400 + 1600).toLocaleString() + '/s';
         }, 1200);
 
-        // SECURE ADAPTIVE AUTO-SCALING FOR CANVAS BOUNDARIES
+        // FAIL-PROOF INTERNAL WIDTH RESOLUTION BINDER
         function adaptCanvasBoundaries() {
-            const configs = [
-                { id: 'globe-render-canvas', defaultH: 155 },
-                { id: 'canvas-latency-chart', defaultH: 75 },
-                { id: 'canvas-heap-chart', defaultH: 75 }
+            const targets = [
+                { id: 'globe-render-canvas', h: 155 },
+                { id: 'canvas-latency-chart', h: 75 },
+                { id: 'canvas-heap-chart', h: 75 }
             ];
             
-            configs.forEach(cfg => {
-                const el = document.getElementById(cfg.id);
+            targets.forEach(target => {
+                const el = document.getElementById(target.id);
                 if(el) {
-                    const boxWidth = el.getBoundingClientRect().width;
-                    // Force minimum rendering sizes if the phone engine misreads sizes during layout loading
-                    el.width = boxWidth > 50 ? boxWidth : (window.innerWidth - 60);
-                    el.height = cfg.defaultH;
+                    // Pull the display width directly, fallback to screen size if reading 0
+                    let displayW = el.clientWidth || el.getBoundingClientRect().width;
+                    if (!displayW || displayW < 10) {
+                        displayW = window.innerWidth - 60;
+                    }
+                    // Hard-assign resolutions to the buffer matrix
+                    el.width = displayW;
+                    el.height = target.h;
                 }
             });
         }
@@ -369,20 +371,19 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             initializeHighTechGlobe();
             launchLiveHardwareTelemetry();
             
-            // Multiple validation timeouts to prevent layout collapse
+            // Loop updates to lock layout calculations into place
             setTimeout(adaptCanvasBoundaries, 100);
-            setTimeout(adaptCanvasBoundaries, 400);
+            setTimeout(adaptCanvasBoundaries, 300);
+            setTimeout(adaptCanvasBoundaries, 600);
         });
         
         window.addEventListener('resize', adaptCanvasBoundaries);
 
-        // HIGH TECH DOTTED DATA GLOBE ARCHITECTURE
         function initializeHighTechGlobe() {
             const canvas = document.getElementById('globe-render-canvas');
             if(!canvas) return;
             const ctx = canvas.getContext('2d');
             
-            // Target Node Tracking Points
             let threatNodes = [
                 { lat: 0.2, lon: 1.5, size: 4, alpha: 1 },
                 { lat: -0.4, lon: 3.2, size: 5, alpha: 0.8 },
@@ -393,46 +394,39 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const centerX = canvas.width / 2;
                 const centerY = canvas.height / 2;
-                const radius = 60;
+                const radius = 58;
 
-                // Draw Background Tech Radar Grids
                 ctx.strokeStyle = 'rgba(30, 41, 59, 0.3)';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius + 12, 0, 2 * Math.PI);
                 ctx.stroke();
 
-                // Hologram Tech Outer Ring
                 ctx.strokeStyle = 'rgba(14, 165, 233, 0.15)';
                 ctx.setLineDash([4, 12]);
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius + 4, 0, 2 * Math.PI);
                 ctx.stroke();
-                ctx.setLineDash([]); // Reset path style
+                ctx.setLineDash([]); 
 
                 globeRotationAngle += 0.005;
 
-                // Draw Hologram Particle Latitude Points
                 for (let latDeg = -5; latDeg <= 5; latDeg++) {
                     let latFactor = latDeg * (Math.PI / 12);
                     let sliceY = centerY + Math.sin(latFactor) * radius;
                     let currentSliceWidth = Math.cos(latFactor) * radius;
 
-                    // High tech precise layout point increments
                     for (let lonDeg = 0; lonDeg < 40; lonDeg++) {
                         let lonAngle = (lonDeg * (Math.PI / 20)) + globeRotationAngle;
                         
-                        // Z-buffering to skip hidden back-facing points
                         if (Math.sin(lonAngle) > 0) {
                             let dotX = centerX + Math.cos(lonAngle) * currentSliceWidth;
-                            
-                            ctx.fillStyle = 'rgba(14, 165, 233, 0.55)';
+                            ctx.fillStyle = 'rgba(14, 165, 233, 0.65)';
                             ctx.fillRect(dotX, sliceY, 1.5, 1.5);
                         }
                     }
                 }
 
-                // Render Active Simulated Threat Vectors
                 threatNodes.forEach(node => {
                     let calcLon = node.lon + globeRotationAngle;
                     if (Math.sin(calcLon) > 0) {
@@ -440,7 +434,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                         let targetX = centerX + Math.cos(calcLon) * projectedSliceW;
                         let targetY = centerY + Math.sin(node.lat) * radius;
 
-                        // Pulsing crosshair node marker
                         ctx.strokeStyle = `rgba(239, 68, 68, ${node.alpha})`;
                         ctx.lineWidth = 1.5;
                         ctx.beginPath();
@@ -454,7 +447,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                     }
                 });
 
-                // Moving Scanner Grid overlay line
                 scanLinePos += 1;
                 if (scanLinePos > canvas.height) scanLinePos = 0;
                 ctx.fillStyle = 'rgba(14, 165, 233, 0.03)';
@@ -465,7 +457,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             drawGlobeFrame();
         }
 
-        // ADVANCED REALISTIC REALTIME OSCILLOSCOPE GRAPHS
         function launchLiveHardwareTelemetry() {
             const latencyCanvas = document.getElementById('canvas-latency-chart');
             const heapCanvas = document.getElementById('canvas-heap-chart');
@@ -478,7 +469,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 let actualLatency = Math.random() * 1.4 + 0.15;
                 let heapMegabytes = 14.15 + Math.random() * 1.8;
 
-                // Spike handling for realism
                 if (Math.random() > 0.94) actualLatency += 2.1;
 
                 latencyBuffer.push(actualLatency); latencyBuffer.shift();
@@ -495,7 +485,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         function renderRealisticGradientPath(canvasObj, ctxObj, dataPoints, lineStrokeColor, fillAreaColor, maxScaleY) {
             ctxObj.clearRect(0, 0, canvasObj.width, canvasObj.height);
             
-            // Background Grid Line Arrays
             ctxObj.strokeStyle = 'rgba(30, 41, 59, 0.25)';
             ctxObj.lineWidth = 0.5;
             for(let gridIdx = 1; gridIdx < 4; gridIdx++) {
@@ -508,7 +497,6 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
 
             let stepHorizontal = canvasObj.width / (dataPoints.length - 1);
 
-            // Construct Path Vectors
             ctxObj.beginPath();
             for (let idx = 0; idx < dataPoints.length; idx++) {
                 let xCoord = idx * stepHorizontal;
@@ -518,16 +506,33 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 if (idx === 0) ctxObj.moveTo(xCoord, yCoord); else ctxObj.lineTo(xCoord, yCoord);
             }
 
-            // Copy path structure to isolate glow fill area
             let pathTrace = new Path2D(ctxObj);
             
-            // Render primary top line stroke
             ctxObj.strokeStyle = lineStrokeColor;
             ctxObj.lineWidth = 2.5;
             ctxObj.stroke();
 
-            // Seal area shape matrix down to baseline to apply color fill
             ctxObj.lineTo(canvasObj.width, canvasObj.height);
             ctxObj.lineTo(0, canvasObj.height);
             ctxObj.closePath();
-            ctxObj.fillSt
+            ctxObj.fillStyle = fillAreaColor;
+            ctxObj.fill();
+        }
+
+        function setupMatrixBackground() {
+            const ctx = mCanvas.getContext('2d');
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*()_+=";
+            const fontSize = 14;
+            const columns = mCanvas.width / fontSize;
+            const rainDrops = Array.from({ length: columns }).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(2, 4, 10, 0.05)';
+                ctx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+                ctx.fillStyle = '#10b981';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet.
