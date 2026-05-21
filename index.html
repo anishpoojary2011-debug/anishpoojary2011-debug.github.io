@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>anish@production-node:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght=400;500;700&family=Inter:wght=300;400;500;600;700&display=swap');
         
         :root {
             --bg: #02040a;
@@ -27,9 +27,10 @@
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
+        /* TOP MONITOR BAR */
         .status-header-bar {
             width: 100%; height: 40px;
             background: #040812;
@@ -49,25 +50,36 @@
             background-color: var(--orange);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--orange);
+            animation: pulseGlow 2s infinite ease-in-out;
         }
 
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* GRID VIEWPORT ARRANGEMENT */
         .workspace-grid {
             width: 100%;
             max-width: 1200px;
-            margin: 50px auto 0 auto;
-            padding: 12px;
+            margin-top: 45px;
+            padding: 10px;
             box-sizing: border-box;
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
+            height: calc(100vh - 55px);
+            overflow-y: auto;
         }
 
         @media(min-width: 900px) {
             .workspace-grid {
                 grid-template-columns: 1fr 1fr;
+                height: calc(100vh - 60px);
             }
         }
 
+        /* CONTENT CONTAINERS */
         .panel-box {
             background: rgba(7, 13, 25, 0.95);
             border: 1px solid var(--border);
@@ -75,6 +87,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            max-height: 46vh;
+        }
+
+        @media(min-width: 900px) {
+            .panel-box { max-height: 100%; }
         }
 
         .panel-tab-bar {
@@ -95,7 +112,8 @@
 
         .terminal-viewport {
             padding: 14px;
-            min-height: 240px;
+            flex: 1;
+            overflow-y: auto;
             background: var(--panel-inner);
             font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
@@ -136,9 +154,11 @@
             padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             background: var(--panel-inner);
             box-sizing: border-box;
+            flex: 1;
+            overflow-y: auto;
         }
 
         .chart-card {
@@ -161,7 +181,7 @@
 
         .svg-container-frame {
             width: 100%;
-            height: 75px;
+            height: 65px;
             background: #020409;
             border-radius: 4px;
             border: 1px solid rgba(30, 41, 59, 0.5);
@@ -169,7 +189,7 @@
 
         .svg-globe-container-frame {
             width: 100%;
-            height: 140px;
+            height: 130px;
             background: #020409;
             border-radius: 4px;
             border: 1px solid rgba(30, 41, 59, 0.5);
@@ -197,9 +217,14 @@
             100% { transform: rotate(360deg); }
         }
         .radar-line {
-            transform-origin: 100px 70px;
+            transform-origin: 100px 65px;
             animation: sweep 4s linear infinite;
         }
+
+        .neofetch-layout {
+            display: flex; gap: 15px; margin: 10px 0; font-size: 0.75rem;
+        }
+        .neofetch-logo { color: var(--cyan); font-weight: bold; line-height: 1.2; }
 
         .c-cyan { color: var(--cyan); }
         .c-purple { color: var(--purple); }
@@ -214,7 +239,7 @@
     <div class="status-header-bar">
         <div class="status-indicator">
             <span class="pulse-dot-orange"></span>
-            <span>NODE: <span class="c-cyan">guard_011</span></span>
+            <span>Status: <span class="c-orange">Developing Discord Moderation Bot</span></span>
         </div>
         <span id="system-clock-panel">00:00:00 PM</span>
     </div>
@@ -222,8 +247,9 @@
     <div class="workspace-grid">
         <div class="panel-box">
             <div class="panel-tab-bar"><div class="tab-pill">bash_terminal.sh</div></div>
-            <div class="terminal-viewport">
+            <div class="terminal-viewport" id="scroll-engine">
                 <div class="terminal-log-output" id="console-log-history">Welcome to the real-time node.
+Active Project: Discord Moderation Engineering.
 Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
@@ -242,14 +268,14 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                         <span class="value-badge c-green">SYNCED</span>
                     </div>
                     <div class="svg-globe-container-frame">
-                        <svg viewBox="0 0 200 140" width="100%" height="100%">
-                            <circle cx="100" cy="70" r="55" fill="none" stroke="#1e293b" />
-                            <circle cx="100" cy="70" r="35" fill="none" stroke="#1e293b" />
-                            <line x1="100" y1="5" x2="100" y2="135" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="20" y1="70" x2="180" y2="70" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="100" y1="70" x2="100" y2="15" stroke="var(--cyan)" stroke-width="1.5" class="radar-line" />
-                            <circle cx="70" cy="50" r="3" fill="var(--red)" />
-                            <circle cx="130" cy="90" r="3" fill="var(--orange)" />
+                        <svg viewBox="0 0 200 130" width="100%" height="100%">
+                            <circle cx="100" cy="65" r="50" fill="none" stroke="#1e293b" />
+                            <circle cx="100" cy="65" r="30" fill="none" stroke="#1e293b" />
+                            <line x1="100" y1="5" x2="100" y2="125" stroke="rgba(30, 41, 59, 0.4)" />
+                            <line x1="20" y1="65" x2="180" y2="65" stroke="rgba(30, 41, 59, 0.4)" />
+                            <line x1="100" y1="65" x2="100" y2="15" stroke="var(--cyan)" stroke-width="1.5" class="radar-line" />
+                            <circle cx="75" cy="45" r="3" fill="var(--red)" />
+                            <circle cx="125" cy="85" r="3" fill="var(--orange)" />
                         </svg>
                     </div>
                 </div>
@@ -262,4 +288,114 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="chart-card">
                     <div class="chart-header-row"><span>Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.40 ms</span></div>
                     <div class="svg-container-frame">
-                        <svg viewBox="0 0 300 7
+                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
+                            <path id="svg-latency-line" d="M 0 40 Q 75 20 150 50 T 300 30" fill="none" stroke="var(--cyan)" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header-row"><span>Memory Heap</span><span class="value-badge c-purple" id="heap-txt">14.20 MB</span></div>
+                    <div class="svg-container-frame">
+                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
+                            <path id="svg-heap-line" d="M 0 30 Q 75 50 150 20 T 300 40" fill="none" stroke="var(--purple)" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const logHistory = document.getElementById('console-log-history');
+        const terminalTyper = document.getElementById('console-terminal-typer');
+        const scrollEngine = document.getElementById('scroll-engine');
+        const clockPanel = document.getElementById('system-clock-panel');
+
+        setInterval(() => { clockPanel.textContent = new Date().toLocaleTimeString(); }, 1000);
+
+        setInterval(() => {
+            document.getElementById('stat-cpu').innerText = (Math.random() * 10 + 5).toFixed(1) + '%';
+            document.getElementById('stat-packets').innerText = Math.floor(Math.random() * 200 + 1200).toLocaleString() + '/s';
+            
+            let lat = (Math.random() * 0.8 + 0.2);
+            let mem = (12.1 + Math.random() * 1.5);
+            document.getElementById('latency-txt').innerText = lat.toFixed(2) + ' ms';
+            document.getElementById('heap-txt').innerText = mem.toFixed(2) + ' MB';
+
+            let p1 = Math.floor(Math.random() * 25 + 15);
+            let p2 = Math.floor(Math.random() * 25 + 25);
+            let p3 = Math.floor(Math.random() * 25 + 15);
+            document.getElementById('svg-latency-line').setAttribute('d', `M 0 ${p1} Q 75 ${p2} 150 ${p3} T 300 ${p1}`);
+
+            let h1 = Math.floor(Math.random() * 20 + 25);
+            let h2 = Math.floor(Math.random() * 20 + 15);
+            let h3 = Math.floor(Math.random() * 20 + 25);
+            document.getElementById('svg-heap-line').setAttribute('d', `M 0 ${h1} Q 75 ${h2} 150 ${h3} T 300 ${h2}`);
+        }, 1000);
+
+        const virtualFS = {
+            "about.txt": "Experienced Server Manager and Community Infrastructure Architect.",
+            "skills.md": "- Discord Automation & Webhooks<br>- Anti-Raid System Integration",
+            "socials.env": "Insta: @__miku._.chan_<br>Discord: @anish"
+        };
+
+        terminalTyper.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = terminalTyper.value.trim();
+                if (!cmd) return;
+
+                logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${cmd}`;
+                terminalTyper.value = '';
+
+                const args = cmd.split(' ');
+                const base = args[0].toLowerCase();
+                const param = args.slice(1).join(' ').toLowerCase();
+
+                if (base === 'help') {
+                    logHistory.innerHTML += `\nCommands: <span class="c-cyan">ls</span>, <span class="c-cyan">cat</span>, <span class="c-cyan">secure</span>, <span class="c-cyan">neofetch</span>, <span class="c-cyan">connect</span>, <span class="c-cyan">clear</span>`;
+                } else if (base === 'ls') {
+                    logHistory.innerHTML += `\n` + Object.keys(virtualFS).join('   ');
+                } else if (base === 'cat') {
+                    if (virtualFS[param]) {
+                        logHistory.innerHTML += `\n` + virtualFS[param];
+                    } else {
+                        logHistory.innerHTML += `\nUnknown file. Try 'cat about.txt'`;
+                    }
+                } else if (base === 'secure') {
+                    logHistory.innerHTML += `\n<span class="c-cyan">[!] Scanning Gateway Infrastructure...</span>\nFilters: <span class="c-green">ACTIVE</span>\nAutomated Moderation Triaging: <span class="c-green">ONLINE</span>`;
+                } else if (base === 'neofetch') {
+                    logHistory.innerHTML += `
+<div class="neofetch-layout">
+<div class="neofetch-logo">
+  __ _ _ __ (_)___| |__  
+ / _\` | '_ \\| / __| '_ \\ 
+| (_| | | | | \\__ \\ | | |
+ \\__,_|_| |_|_|___/_       |_|
+</div>
+<div>
+<span class="c-cyan">anish@production-gateway</span><br>
+-----------------------<br>
+<span class="c-purple">Project:</span> Discord Mod Engine<br>
+<span class="c-purple">Shell:</span> Mock Bash Client v7.5<br>
+<span class="c-purple">Status:</span> Layout Core Stable
+</div>
+</div>`;
+                } else if (base === 'connect') {
+                    logHistory.innerHTML += `\nBridging redirect gateway...`;
+                    setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 500);
+                } else if (base === 'clear') {
+                    logHistory.innerHTML = 'Logs cleared.';
+                } else {
+                    logHistory.innerHTML += `\nbash: unrecognized operation: '${base}'`;
+                }
+
+                scrollEngine.scrollTop = scrollEngine.scrollHeight;
+            }
+        });
+
+        document.addEventListener('click', () => { terminalTyper.focus(); });
+    </script>
+</body>
+</html>
