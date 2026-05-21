@@ -55,7 +55,6 @@
             display: flex; align-items: center; gap: 8px;
         }
 
-        /* ORANGE ANIMATED PULSE DOT FOR ACTIVE DEVELOPMENT */
         .pulse-dot-orange {
             width: 7px; height: 7px;
             background-color: var(--orange);
@@ -123,7 +122,7 @@
 
         .terminal-viewport {
             padding: 15px;
-            height: 350px;
+            height: 480px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
@@ -203,6 +202,15 @@
             display: block;
         }
 
+        /* ROUNDING GLOBE MODULE WRAPPER */
+        .globe-canvas-frame {
+            width: 100%;
+            height: 160px;
+            background: #02040a;
+            border-radius: 4px;
+            display: block;
+        }
+
         .c-cyan { color: var(--cyan); }
         .c-purple { color: var(--purple); }
         .c-green { color: var(--green); }
@@ -240,14 +248,25 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         <div class="panel-box">
             <div class="panel-tab-bar"><div class="tab-pill">telemetry_dashboard.conf</div></div>
             <div class="telemetry-stack">
+                
+                <div class="chart-card">
+                    <div class="chart-header-row">
+                        <span>Global Guard Proxy Node Link</span>
+                        <span class="value-badge c-green">ROTATING ACTIVE</span>
+                    </div>
+                    <canvas id="globe-render-canvas" class="globe-canvas-frame" width="320" height="160"></canvas>
+                </div>
+
                 <div class="chart-card">
                     <div class="chart-header-row"><span>DOM Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.0 ms</span></div>
                     <canvas id="canvas-latency-chart" class="canvas-render-frame" width="320" height="65"></canvas>
                 </div>
+                
                 <div class="chart-card">
                     <div class="chart-header-row"><span>Allocated JS Memory Heap</span><span class="value-badge c-purple" id="heap-txt">0.00 MB</span></div>
                     <canvas id="canvas-heap-chart" class="canvas-render-frame" width="320" height="65"></canvas>
                 </div>
+
             </div>
         </div>
     </div>
@@ -263,6 +282,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         let heapBuffer = Array(45).fill(20);
         let commandHistory = [];
         let historyIndex = -1;
+        let globeRotationAngle = 0;
 
         setInterval(() => {
             clockPanel.textContent = new Date().toLocaleTimeString();
@@ -271,7 +291,60 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         window.addEventListener('DOMContentLoaded', () => {
             launchLiveHardwareTelemetry();
             setupMatrixBackground();
+            initializeRotatingGlobe();
         });
+
+        // ROTATING GLOBAL NODE RENDERING MATRIX ENGINE
+        function initializeRotatingGlobe() {
+            const canvas = document.getElementById('globe-render-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            function drawGlobeFrame() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = 65;
+
+                // Outer atmosphere ring
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.strokeStyle = 'rgba(14, 165, 233, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                globeRotationAngle += 0.008;
+
+                // Render structured longitude wireframe slices
+                for (let i = 0; i < 7; i++) {
+                    let angleOffset = (i * Math.PI / 7) + globeRotationAngle;
+                    let horizontalRadiusScale = Math.sin(angleOffset) * radius;
+                    
+                    if (horizontalRadiusScale > -0.1) {
+                        ctx.beginPath();
+                        ctx.ellipse(centerX, centerY, Math.abs(horizontalRadiusScale), radius, 0, 0, 2 * Math.PI);
+                        ctx.strokeStyle = 'rgba(14, 165, 233, 0.35)';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+
+                // Render latitude parallel bands
+                for (let j = 1; j < 6; j++) {
+                    let sliceY = centerY - radius + (j * (radius * 2) / 6);
+                    let sliceWidth = Math.sqrt(radius * radius - Math.pow(centerY - sliceY, 2));
+                    
+                    ctx.beginPath();
+                    ctx.ellipse(centerX, sliceY, sliceWidth, sliceWidth * 0.25, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(139, 92, 246, 0.25)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                requestAnimationFrame(drawGlobeFrame);
+            }
+            drawGlobeFrame();
+        }
 
         function launchLiveHardwareTelemetry() {
             const latencyCanvas = document.getElementById('canvas-latency-chart');
@@ -351,7 +424,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             "socials.env": `- Instagram: @__miku._.chan_\n- Discord: @anish\n- GitHub: anishpoojary2011-debug`
         };
 
-        const binList = ['help', 'ls', 'cat', 'connect', 'clear', 'neofetch', 'ping', 'matrix', 'date'];
+        const binList = ['help', 'ls', 'cat', 'connect', 'clear', 'neofetch', 'ping', 'matrix', 'date', 'secure', 'guard', 'logs', 'modules'];
 
         terminalTyper.addEventListener('keydown', function(event) {
             if (event.key === 'Tab') {
@@ -393,7 +466,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 const operationalParameter = components.slice(1).join(' ');
 
                 if (baseOpcode === 'help') {
-                    logHistory.innerHTML += `\nDirectives available:\n  <span class="c-cyan">ls</span>       - List records\n  <span class="c-cyan">cat</span>      - Read records\n  <span class="c-cyan">neofetch</span> - System architectural metrics\n  <span class="c-cyan">ping</span>     - Echo connection health\n  <span class="c-cyan">matrix</span>   - Toggle stream overlay background\n  <span class="c-cyan">date</span>     - Timestamp server clock\n  <span class="c-cyan">connect</span>  - Forward to primary Discord node\n  <span class="c-cyan">clear</span>    - Clear logs`;
+                    logHistory.innerHTML += `\nDirectives available:\n  <span class="c-cyan">ls</span>       - List records\n  <span class="c-cyan">cat</span>      - Read records\n  <span class="c-cyan">secure</span>   - Scan security firewalls on anti-nuke core\n  <span class="c-cyan">guard</span>    - Check custom anti-nuke server threshold triggers\n  <span class="c-cyan">logs</span>     - View live intercepted raid logs on nodes\n  <span class="c-cyan">modules</span>  - Inspect backend sub-process protection statuses\n  <span class="c-cyan">neofetch</span> - View custom server environment statistics\n  <span class="c-cyan">matrix</span>   - Toggle digital code stream backdrop graphics\n  <span class="c-cyan">connect</span>  - Dispatch request tunnel straight to Discord link\n  <span class="c-cyan">clear</span>    - Wipe active text layout tracking out of viewport`;
                 } else if (baseOpcode === 'ls') {
                     logHistory.innerHTML += `\n` + Object.keys(virtualFS).map(file => `<span class="c-cyan">${file}</span>`).join('    ');
                 } else if (baseOpcode === 'cat') {
@@ -402,51 +475,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                     } else {
                         logHistory.innerHTML += `\nFile not found. Try <span class="c-cyan">cat about.txt</span>`;
                     }
-                } else if (baseOpcode === 'neofetch') {
-                    logHistory.innerHTML += `
-<div class="neofetch-layout">
-<div class="neofetch-logo">
-  __ _ _ __ (_)___| |__  
- / _\` | '_ \\| / __| '_ \\ 
-| (_| | | | | \\__ \\ | | |
- \\__,_|_| |_|_|___/_       |_|
-</div>
-<div>
-<span class="c-cyan">anish@production-gateway</span><br>
------------------------<br>
-<span class="c-purple">Project:</span> Anti-Nuke Security Suite<br>
-<span class="c-purple">Kernel:</span> Webkit Performance API<br>
-<span class="c-purple">Shell:</span> Custom Mock Bash v7.5<br>
-<span class="c-purple">Status:</span> Active Refactoring Layer
-</div>
-</div>`;
-                } else if (baseOpcode === 'ping') {
-                    logHistory.innerHTML += `\n64 bytes from secure-core.bot: time=0.42 ms\n64 bytes from secure-core.bot: time=0.39 ms`;
-                } else if (baseOpcode === 'matrix') {
-                    const currentStyle = window.getComputedStyle(mCanvas).display;
-                    if(currentStyle === 'none') {
-                        mCanvas.style.display = 'block';
-                        logHistory.innerHTML += `\n<span class="c-green">Matrix stream overlay engaged.</span>`;
-                    } else {
-                        mCanvas.style.display = 'none';
-                        logHistory.innerHTML += `\n<span class="c-dim">Matrix stream overlay disengaged.</span>`;
-                    }
-                } else if (baseOpcode === 'date') {
-                    logHistory.innerHTML += `\n${new Date().toString()}`;
-                } else if (baseOpcode === 'connect') {
-                    logHistory.innerHTML += `\n🔗 Opening redirect gateway connection link...`;
-                    setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 800);
-                } else if (baseOpcode === 'clear') {
-                    logHistory.innerHTML = 'Logs flushed.';
-                } else {
-                    logHistory.innerHTML += `\nbash: instruction unrecognized: '${baseOpcode}'`;
-                }
-
-                scrollEngine.scrollTop = scrollEngine.scrollHeight;
-            }
-        });
-
-        document.addEventListener('click', () => { terminalTyper.focus(); });
-    </script>
-</body>
-</html>
+                } else if (baseOpcode === 'secure') {
+                    logHistory.innerHTML += `\n<span class="c-cyan">[!] Initializing Global Security Scan...</span>\nChecking encryption filters... <span class="c-green">OK</span>\nEvaluating webhook overrides... <span class="c-green">SECURE</span>\nIntegrity Status: <span class="c-green">100% Locked Down</span>`;
+                } else if (baseOpcode === 'guard') {
+                    logHistory.innerHTML += `\n<span class="c-purple">== ACTIVE THRESHOLD DEFENSES ==</span>\n- Max Channel Deletions: <span class="c-orange">2 per 10s</span>\n- Anti-Ma	
