@@ -14,6 +14,7 @@
             --cyan: #0ea5e9;
             --purple: #8b5cf6;
             --green: #10b981;
+            --red: #ef4444;
             --text: #f1f5f9;
             --text-dim: #64748b;
         }
@@ -25,52 +26,18 @@
             color: var(--text);
             font-family: 'Inter', sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
-        /* LOADING INTRO SCREEN - FORCED VISIBLE STYLING */
-        #boot-screen {
+        /* LIVE BACKGROUND MATRIX CANVAS ALTERNATIVE */
+        #matrix-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #02040a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            opacity: 1;
-            transition: opacity 0.4s ease;
-        }
-
-        .boot-wrapper {
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-        }
-
-        .boot-title {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            color: var(--cyan);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        .premium-loader-track {
-            width: 100%; height: 4px;
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .premium-loader-bar {
-            width: 0%; height: 100%;
-            background: linear-gradient(90deg, var(--cyan), var(--purple));
-            box-shadow: 0 0 15px var(--cyan);
-            animation: load-execute 1.8s ease-in-out forwards;
-        }
-
-        @keyframes load-execute {
-            0% { width: 0%; }
-            100% { width: 100%; }
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+            display: none;
+            pointer-events: none;
         }
 
         /* HARDWARE STATUS TOP ACCENT */
@@ -97,12 +64,14 @@
 
         /* SPLIT SCREEN WORKSPACE LAYOUT */
         .workspace-grid {
-            display: none; /* Kept hidden until loader finishes */
+            position: relative;
+            z-index: 10;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 15px;
             box-sizing: border-box;
+            display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
             margin-top: 45px;
@@ -114,11 +83,15 @@
             }
         }
 
+        /* IDE PLATFORM PANELS */
         .panel-box {
-            background: var(--panel);
+            background: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border);
             border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
@@ -133,7 +106,7 @@
         }
 
         .tab-pill {
-            background: var(--panel);
+            background: #0b1329;
             color: var(--cyan);
             font-family: 'Fira Code', monospace;
             font-size: 0.75rem;
@@ -143,14 +116,18 @@
             border-bottom: none;
         }
 
+        /* INTERACTIVE TERMINAL WINDOW */
         .terminal-viewport {
             padding: 15px;
-            height: 320px;
+            height: 350px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
             line-height: 1.6;
         }
+
+        .terminal-viewport::-webkit-scrollbar { width: 5px; }
+        .terminal-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
         .terminal-log-output {
             color: #cbd5e1;
@@ -168,6 +145,7 @@
             color: var(--purple);
             font-weight: bold;
             margin-right: 8px;
+            white-space: nowrap;
         }
 
         .terminal-input-field {
@@ -180,6 +158,13 @@
             width: 100%;
         }
 
+        /* NEOFETCH ROW DESIGN */
+        .neofetch-layout {
+            display: flex; gap: 20px; margin: 10px 0; font-size: 0.8rem;
+        }
+        .neofetch-logo { color: var(--cyan); font-weight: bold; line-height: 1.2; }
+
+        /* TELEMETRY METRIC FEED MODULES */
         .telemetry-stack {
             padding: 15px;
             display: flex;
@@ -219,23 +204,18 @@
         .c-cyan { color: var(--cyan); }
         .c-purple { color: var(--purple); }
         .c-green { color: var(--green); }
+        .c-red { color: var(--red); }
+        .c-dim { color: var(--text-dim); }
     </style>
 </head>
 <body>
 
-    <div id="boot-screen">
-        <div class="boot-wrapper">
-            <div class="boot-title">INITIALIZING QUANTUM HUB CORE...</div>
-            <div class="premium-loader-track">
-                <div class="premium-loader-bar"></div>
-            </div>
-        </div>
-    </div>
+    <canvas id="matrix-canvas"></canvas>
 
     <div class="status-header-bar">
         <div class="status-indicator">
             <span class="pulse-dot"></span>
-            <span>node_cluster_017</span>
+            <span>node_cluster_017@production</span>
         </div>
         <span id="system-clock-panel">00:00:00 PM</span>
     </div>
@@ -245,10 +225,10 @@
             <div class="panel-tab-bar"><div class="tab-pill">bash_terminal.sh</div></div>
             <div class="terminal-viewport" id="scroll-engine-box">
                 <div class="terminal-log-output" id="console-log-history">Welcome to the real-time operational monitoring node grid.
-Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
+Type <span class="c-cyan">'help'</span> to look up system instructions. Has history tracking (ArrowUp/Down).</div>
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
-                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" placeholder="Execute operation...">
+                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" placeholder="Execute operation..." inputmode="text">
                 </div>
             </div>
         </div>
@@ -269,31 +249,25 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
     </div>
 
     <script>
-        const bootScreen = document.getElementById('boot-screen');
-        const workspaceGrid = document.getElementById('main-workspace');
         const logHistory = document.getElementById('console-log-history');
         const terminalTyper = document.getElementById('console-terminal-typer');
         const scrollEngine = document.getElementById('scroll-engine-box');
         const clockPanel = document.getElementById('system-clock-panel');
+        const mCanvas = document.getElementById('matrix-canvas');
 
         let latencyBuffer = Array(45).fill(1);
         let heapBuffer = Array(45).fill(20);
+        let commandHistory = [];
+        let historyIndex = -1;
+        let matrixInterval = null;
 
         setInterval(() => {
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
-        // This triggers the transition cleanly after 2 seconds
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                bootScreen.style.opacity = '0';
-                setTimeout(() => {
-                    bootScreen.style.display = 'none';
-                    workspaceGrid.style.display = 'grid';
-                    if(terminalTyper) terminalTyper.focus();
-                    launchLiveHardwareTelemetry();
-                }, 400);
-            }, 2200);
+            launchLiveHardwareTelemetry();
+            setupMatrixBackground();
         });
 
         function launchLiveHardwareTelemetry() {
@@ -341,18 +315,78 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             ctxObj.stroke();
         }
 
+        // MATRIX RENDERING SUB-ENGINE
+        function setupMatrixBackground() {
+            const ctx = mCanvas.getContext('2d');
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*()_+=";
+            const fontSize = 14;
+            const columns = mCanvas.width / fontSize;
+            const rainDrops = Array.from({ length: columns }).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.05)';
+                ctx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+                ctx.fillStyle = '#10b981';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                    if (rainDrops[i] * fontSize > mCanvas.height && Math.random() > 0.975) {
+                        rainDrops[i] = 0;
+                    }
+                    rainDrops[i]++;
+                }
+            }
+            matrixInterval = setInterval(draw, 30);
+        }
+
         const virtualFS = {
             "about.txt": `I am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.`,
             "skills.md": `- Discord Automation & Webhook Integration\n- Linux Bash Scripting Environments\n- Front-End Dashboard Interfaces`,
-            "socials.env": `- Instagram: @__miku._.chan_\n- Discord: @anish\n- GitHub: anishpoojary2011-debug`
+            "socials.env": `- Instagram: @__miku._.chan_\n- Discord: @anish\n- GitHub: anishpoojary2011-debug`,
+            "motd.cap": `⚡ Mainframe Status: OPERATIONAL\nWelcome back, Administrator. Keep tracking system telemetry feeds safely.`
         };
 
+        const binList = ['help', 'ls', 'cat', 'connect', 'clear', 'neofetch', 'sudo', 'ping', 'matrix', 'date'];
+
         terminalTyper.addEventListener('keydown', function(event) {
+            // Tab Autocomplete
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const currentInput = terminalTyper.value.trim().toLowerCase();
+                if (!currentInput) return;
+                const match = binList.find(cmd => cmd.startsWith(currentInput));
+                if (match) terminalTyper.value = match;
+            }
+
+            // Command History Navigation
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                }
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                } else if (historyIndex === 0) {
+                    historyIndex = -1;
+                    terminalTyper.value = '';
+                }
+            }
+
             if (event.key === 'Enter') {
                 const terminalRawLine = terminalTyper.value.trim();
                 if (!terminalRawLine) return;
 
                 logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${terminalRawLine}`;
+                commandHistory.push(terminalRawLine);
+                historyIndex = -1;
                 terminalTyper.value = '';
 
                 const components = terminalRawLine.split(' ');
@@ -360,17 +394,55 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 const operationalParameter = components.slice(1).join(' ');
 
                 if (baseOpcode === 'help') {
-                    logHistory.innerHTML += `\nDirectives:\n  <span class="c-cyan">ls</span>      - List records\n  <span class="c-cyan">cat</span>     - Read files\n  <span class="c-cyan">connect</span> - Open Discord link\n  <span class="c-cyan">clear</span>   - Clear terminal window`;
+                    logHistory.innerHTML += `\nDirectives available:\n  <span class="c-cyan">ls</span>       - List virtual directory workspace layout maps\n  <span class="c-cyan">cat</span>      - Read text output data records inside targeted files\n  <span class="c-cyan">neofetch</span> - Pull comprehensive hardware architecture statistics\n  <span class="c-cyan">ping</span>     - Test signal execution echo responses\n  <span class="c-cyan">matrix</span>   - Toggle live matrix overlay backdrop stream state\n  <span class="c-cyan">sudo</span>     - Run instruction with elevated administrative clearance\n  <span class="c-cyan">date</span>     - Output active standard clock tracking time strings\n  <span class="c-cyan">connect</span>  - Forward directly to active Discord link\n  <span class="c-cyan">clear</span>    - Wipe active history logs out of viewport window`;
                 } else if (baseOpcode === 'ls') {
                     logHistory.innerHTML += `\n` + Object.keys(virtualFS).map(file => `<span class="c-cyan">${file}</span>`).join('    ');
                 } else if (baseOpcode === 'cat') {
                     if (virtualFS[operationalParameter.toLowerCase()]) {
                         logHistory.innerHTML += `\n` + virtualFS[operationalParameter.toLowerCase()];
                     } else {
-                        logHistory.innerHTML += `\nFile not found. Try 'cat about.txt'`;
+                        logHistory.innerHTML += `\nFile not found. Usage example: <span class="c-cyan">cat about.txt</span>`;
                     }
+                } else if (baseOpcode === 'neofetch') {
+                    logHistory.innerHTML += `
+<div class="neofetch-layout">
+<div class="neofetch-logo">
+  __ _ _ __ (_)___| |__  
+ / _\` | '_ \\| / __| '_ \\ 
+| (_| | | | | \\__ \\ | | |
+ \\__,_|_| |_|_|___/_       |_|
+</div>
+<div>
+<span class="c-cyan">anish@production-gateway</span><br>
+-----------------------<br>
+<span class="c-purple">OS:</span> Cyberpunk DashEngine v7.5<br>
+<span class="c-purple">Kernel:</span> Webkit Web Performance Core API<br>
+<span class="c-purple">Uptime:</span> Live Tracking Enabled<br>
+<span class="c-purple">Shell:</span> Custom JS Terminal Mock Bash<br>
+<span class="c-purple">Resolution:</span> Responsive Viewport Grid Layout
+</div>
+</div>`;
+                } else if (baseOpcode === 'ping') {
+                    logHistory.innerHTML += `\n64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.45 ms\n64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.38 ms\n--- 127.0.0.1 ping statistics ---`;
+                } else if (baseOpcode === 'matrix') {
+                    const currentStyle = window.getComputedStyle(mCanvas).display;
+                    if(currentStyle === 'none') {
+                        mCanvas.style.display = 'block';
+                        logHistory.innerHTML += `\n<span class="c-green">Matrix stream activated successfully.</span>`;
+                    } else {
+                        mCanvas.style.display = 'none';
+                        logHistory.innerHTML += `\n<span class="c-dim">Matrix stream disabled.</span>`;
+                    }
+                } else if (baseOpcode === 'sudo') {
+                    if(!operationalParameter) {
+                        logHistory.innerHTML += `\n<span class="c-red">sudo: missing target action instruction parameters.</span>`;
+                    } else {
+                        logHistory.innerHTML += `\n<span class="c-red">[sudo] password required for anish: </span>\nPermission override accepted. Processing: '${operationalParameter}'...`;
+                    }
+                } else if (baseOpcode === 'date') {
+                    logHistory.innerHTML += `\n${new Date().toString()}`;
                 } else if (baseOpcode === 'connect') {
-                    logHistory.innerHTML += `\n🔗 Launching Discord redirection...`;
+                    logHistory.innerHTML += `\n🔗 Redirection protocol sequence verified. Connecting...`;
                     setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 800);
                 } else if (baseOpcode === 'clear') {
                     logHistory.innerHTML = 'Terminal history logs cleared.';
@@ -382,7 +454,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             }
         });
 
-        document.addEventListener('click', () => { if(terminalTyper) terminalTyper.focus(); });
+        document.addEventListener('click', () => { terminalTyper.focus(); });
     </script>
 </body>
 </html>
