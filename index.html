@@ -3,530 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anish@mainframe:~</title>
+    <title>anish@production-node:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap');
         
         :root {
-            --bg-gradient: radial-gradient(circle at 50% 50%, #0d1527 0%, #050814 100%);
-            --panel-bg: rgba(15, 23, 42, 0.65);
-            --border-color: rgba(56, 189, 248, 0.2);
-            --neon-blue: #0ea5e9;
-            --neon-cyan: #38bdf8;
-            --neon-purple: #a855f7;
-            --matrix-green: #10b981;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-        }
-
-        * {
-            box-sizing: border-box;
-            user-select: none;
+            --bg: #030712;
+            --panel: #0b1329;
+            --border: #1e293b;
+            --cyan: #0ea5e9;
+            --purple: #8b5cf6;
+            --green: #10b981;
+            --text: #f1f5f9;
+            --text-dim: #64748b;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
-            color: var(--text-primary);
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* CRT SCANLINE REFINEMENT */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            z-index: 9999;
-            background-size: 100% 4px;
-            pointer-events: none;
-            opacity: 0.3;
+        /* HARDWARE STATUS TOP ACCENT */
+        .status-header-bar {
+            width: 100%; height: 35px;
+            background: #070d19;
+            border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; left: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; font-size: 0.75rem; font-family: 'Fira Code', monospace;
+            color: var(--text-dim); box-sizing: border-box;
         }
 
-        /* STATUS TOP BAR */
-        .desktop-top-bar {
-            width: 100%;
-            height: 35px;
-            background: rgba(10, 15, 30, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+        .status-indicator {
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .status-cluster {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .pulse-indicator {
-            width: 8px;
-            height: 8px;
-            background-color: var(--neon-cyan);
+        .pulse-dot {
+            width: 7px; height: 7px;
+            background-color: var(--green);
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 12px var(--neon-cyan);
-            animation: pulse-glow 2s infinite;
+            box-shadow: 0 0 10px var(--green);
         }
 
-        @keyframes pulse-glow {
-            0%, 100% { transform: scale(0.9); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-
-        /* LOADING INTRO SCREEN */
-        #boot-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #02040a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            transition: opacity 0.4s ease;
-        }
-
-        .boot-wrapper {
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-        }
-
-        .boot-title {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            color: var(--neon-cyan);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        .premium-loader-track {
-            width: 100%; height: 4px;
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .premium-loader-bar {
-            width: 0%; height: 100%;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-            box-shadow: 0 0 15px var(--neon-blue);
-            animation: load-execute 1.8s ease-in-out forwards;
-        }
-
-        @keyframes load-execute {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        /* MAIN APPS LAYOUT CONTAINER */
-        #workspace-layer {
-            display: none;
+        /* SPLIT SCREEN WORKSPACE LAYOUT */
+        .workspace-grid {
             width: 100%;
-            height: calc(100% - 35px);
-            margin-top: 35px;
-            padding: 15px;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        .grid-blueprint {
-            width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 15px;
+            box-sizing: border-box;
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
+            margin-top: 45px;
         }
 
-        @media(min-width: 768px) {
-            .grid-blueprint {
-                grid-template-columns: 1.2fr 0.8fr;
+        @media(min-width: 850px) {
+            .workspace-grid {
+                grid-template-columns: 1.1fr 0.9fr;
             }
         }
 
-        /* GLASS CARD CONTAINERS */
-        .premium-card {
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
+        /* IDE PLATFORM PANELS */
+        .panel-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
 
-        .card-header {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--neon-cyan);
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        .panel-tab-bar {
+            background: #070d19;
+            padding: 0 10px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 1px solid var(--border);
         }
 
-        /* CONSOLE INNER VIEWPORT */
+        .tab-pill {
+            background: var(--panel);
+            color: var(--cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 6px 6px 0 0;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            font-weight: 500;
+        }
+
+        /* INTERACTIVE TERMINAL WINDOW */
         .terminal-viewport {
+            padding: 15px;
             height: 320px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        .terminal-viewport::-webkit-scrollbar { width: 4px; }
-        .terminal-viewport::-webkit-scrollbar-thumb { background: var(--border-color); }
+        .terminal-viewport::-webkit-scrollbar { width: 5px; }
+        .terminal-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        .history-output { color: #cbd5e1; white-space: pre-wrap; }
+        .terminal-log-output {
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
 
-        .input-line-wrapper {
+        .input-row {
             display: flex;
             align-items: center;
             width: 100%;
             margin-top: 8px;
         }
 
-        .shell-prompt {
-            color: var(--neon-purple);
-            font-weight: 700;
+        .terminal-prompt-tag {
+            color: var(--purple);
+            font-weight: bold;
             margin-right: 8px;
             white-space: nowrap;
         }
 
-        .shell-dir { color: var(--neon-cyan); }
-
-        .terminal-input-engine {
+        .terminal-input-field {
             background: transparent;
             border: none;
             outline: none;
-            color: var(--text-primary);
+            color: #ffffff;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
             width: 100%;
         }
 
-        /* LIVE HARDWARE GRAPH WIDGETS */
-        .telemetry-node {
+        /* TELEMETRY METRIC FEED MODULES */
+        .telemetry-stack {
+            padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .widget-block {
-            background: rgba(10, 15, 28, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            border-radius: 6px;
+        .chart-card {
+            background: rgba(4, 7, 15, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             padding: 12px;
         }
 
-        .widget-label-row {
+        .chart-header-row {
             display: flex;
             justify-content: space-between;
             font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
             font-family: 'Fira Code', monospace;
+            color: var(--text-dim);
+            margin-bottom: 8px;
         }
 
-        .widget-value { font-weight: 600; color: var(--text-primary); }
+        .value-badge {
+            font-weight: bold;
+            color: var(--text);
+        }
 
-        .canvas-graph-render {
-            width: 100%; height: 60px;
-            background: #040712;
+        .canvas-render-frame {
+            width: 100%;
+            height: 65px;
+            background: #02040a;
             border-radius: 4px;
             display: block;
+            border: 1px solid rgba(255, 255, 255, 0.01);
         }
 
-        /* NEOFTECH CUSTOM DESIGNED ROW */
-        .neofetch-card-layout {
-            display: flex; flex-direction: column; gap: 10px; padding: 5px 0;
-        }
-        @media(min-width: 480px) {
-            .neofetch-card-layout { flex-direction: row; gap: 20px; }
-        }
-
-        .neofetch-avatar-code {
-            color: var(--neon-cyan); font-weight: bold; white-space: pre; font-size: 0.7rem; line-height: 1.1;
-        }
-
-        .neofetch-stats { font-size: 0.8rem; line-height: 1.4; }
-
-        .c-cyan { color: var(--neon-cyan); }
-        .c-purple { color: var(--neon-purple); }
-        .c-green { color: var(--matrix-green); }
-        .c-sec { color: var(--text-secondary); }
+        .c-cyan { color: var(--cyan); }
+        .c-purple { color: var(--purple); }
+        .c-green { color: var(--green); }
+        .c-dim { color: var(--text-dim); }
     </style>
 </head>
 <body>
 
-    <div class="desktop-top-bar">
-        <div class="status-cluster">
-            <span><span class="pulse-indicator"></span> gateway_v7.2</span>
-            <span>SH-5.2</span>
+    <div class="status-header-bar">
+        <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span>node_cluster_cluster_017</span>
         </div>
-        <div class="status-cluster">
-            <span id="live-clock-panel">00:00:00 PM</span>
-        </div>
+        <span id="system-clock-panel">00:00:00 PM</span>
     </div>
 
-    <div id="boot-screen">
-        <div class="boot-wrapper">
-            <div class="boot-title">INITIALIZING QUANTUM HUB CORE...</div>
-            <div class="premium-loader-track">
-                <div class="premium-loader-bar"></div>
+    <div class="workspace-grid">
+        
+        <div class="panel-box">
+            <div class="panel-tab-bar">
+                <div class="tab-pill">bash_terminal.sh</div>
             </div>
-        </div>
-    </div>
+            <div class="terminal-viewport" id="scroll-engine-box">
+                <div class="terminal-log-output" id="console-log-history">Welcome to the high-fidelity live server mainframe platform.
+* Security Layer: Active session authorization established.
+* Hardware tracking: Connected directly to browser execution hooks.
 
-    <div id="workspace-layer">
-        <div class="grid-blueprint">
-            
-            <div class="premium-card">
-                <div class="card-header">💻 Core Command Environment</div>
-                <div class="terminal-viewport" id="viewport-scroll-node">
-                    <div class="history-output" id="shell-history-node">Welcome to the advanced command mainframe node interface.
-* Status: Secure frosted sandbox authorization confirmed.
-
-Type <span class="c-cyan">'help'</span> to see valid operational commands.
-Type <span class="c-cyan">'neofetch'</span> for architectural hardware profiles.</div>
-                    
-                    <div class="input-line-wrapper">
-                        <span class="shell-prompt">anish@gateway:<span class="shell-dir">~</span>$</span>
-                        <input type="text" class="terminal-input-engine" id="shell-typer-node" autofocus autocomplete="off" placeholder="Run terminal query..." inputmode="text">
-                    </div>
+Type <span class="c-cyan">'help'</span> to view target commands.
+Type <span class="c-cyan">'ls'</span> to parse project files.</div>
+                
+                <div class="input-row">
+                    <span class="terminal-prompt-tag">anish@gateway:~$</span>
+                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" placeholder="Execute operation..." inputmode="text">
                 </div>
             </div>
-
-            <div class="premium-card">
-                <div class="card-header">📊 Real-Time Diagnostic Streams</div>
-                <div class="telemetry-node">
-                    
-                    <div class="widget-block">
-                        <div class="widget-label-row">
-                            <span>CPU Processing Load</span>
-                            <span class="widget-value c-cyan" id="cpu-numerical-display">0%</span>
-                        </div>
-                        <canvas id="canvas-cpu-hud" class="canvas-graph-render" width="300" height="60"></canvas>
-                    </div>
-
-                    <div class="widget-block">
-                        <div class="widget-label-row">
-                            <span>Dynamic Memory Allocation</span>
-                            <span class="widget-value c-purple" id="ram-numerical-display">0%</span>
-                        </div>
-                        <canvas id="canvas-ram-hud" class="canvas-graph-render" width="300" height="60"></canvas>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
+
+        <div class="panel-box">
+            <div class="panel-tab-bar">
+                <div class="tab-pill">telemetry_dashboard.conf</div>
+            </div>
+            <div class="telemetry-stack">
+                
+                <div class="chart-card">
+                    <div class="chart-header-row">
+                        <span>Page Script Execution Delay</span>
+                        <span class="value-badge c-cyan" id="latency-txt">0.0 ms</span>
+                    </div>
+                    <canvas id="canvas-latency-chart" class="canvas-render-frame" width="320" height="65"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header-row">
+                        <span>Active Tab Memory Heap Usage</span>
+                        <span class="value-badge c-purple" id="heap-txt">0.00 MB</span>
+                    </div>
+                    <canvas id="canvas-heap-chart" class="canvas-render-frame" width="320" height="65"></canvas>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const bootScreen = document.getElementById('boot-screen');
-        const workspaceLayer = document.getElementById('workspace-layer');
-        const typer = document.getElementById('shell-typer-node');
-        const historyNode = document.getElementById('shell-history-node');
-        const viewportScroll = document.getElementById('viewport-scroll-node');
-        const clockPanel = document.getElementById('live-clock-panel');
+        const logHistory = document.getElementById('console-log-history');
+        const terminalTyper = document.getElementById('console-terminal-typer');
+        const scrollEngine = document.getElementById('scroll-engine-box');
+        const clockPanel = document.getElementById('system-clock-panel');
 
-        let audioCtx = null;
-        let commandHistoryStack = [];
-        let internalHistoryIndex = -1;
+        let latencyBuffer = Array(45).fill(2);
+        let heapBuffer = Array(45).fill(15);
 
-        let cpuPoints = Array(40).fill(20);
-        let ramPoints = Array(40).fill(45);
-
-        const virtualFS = {
-            "about.txt": `ABOUT:\nI am an experienced <span class="c-cyan">Discord Server Manager</span> & Community Architect.\nI design comprehensive automation maps, protect assets, and build complex logic structures.`,
-            "skills.md": `SKILLS MATRIX:\n- Infrastructure Layouts & Permission Matrix Design\n- Custom Bot Automation Pipelines & Webhook Hooking\n- Linux shell configuration (Termux / Native Bash Environment)\n- Modern User Interfaces (Responsive HTML5 / Minimalist CSS Engineering)`,
-            "socials.env": `ENDPOINT LINKS:\n- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Execute 'connect' to initialize bridge redirection)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
-        };
-
-        const operationalBinaryList = ['help', 'ls', 'cat', 'neofetch', 'clear', 'connect', 'whoami', 'date'];
-
-        function updateClockEngine() {
+        // SYNC REAL WALL CLOCK
+        setInterval(() => {
             clockPanel.textContent = new Date().toLocaleTimeString();
-        }
-        setInterval(updateClockEngine, 1000);
-        updateClockEngine();
+        }, 1000);
 
-        function playSystemAudioBeep(freq, duration, type = 'sine', volume = 0.015) {
-            if (!audioCtx) return;
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
-        }
-
-        setTimeout(() => {
-            bootScreen.style.opacity = '0';
-            setTimeout(() => {
-                bootScreen.style.display = 'none';
-                workspaceLayer.style.display = 'block';
-                typer.focus();
-                initializeTelemetryTickingGraphs();
-                playSystemAudioBeep(880, 0.1, 'sine', 0.03);
-            }, 400);
-        }, 2000);
-
-        function initializeTelemetryTickingGraphs() {
-            const cpuCanvas = document.getElementById('canvas-cpu-hud');
-            const ramCanvas = document.getElementById('canvas-ram-hud');
-            const cpuTxt = document.getElementById('cpu-numerical-display');
-            const ramTxt = document.getElementById('ram-numerical-display');
-
-            const cCtx = cpuCanvas.getContext('2d');
-            const rCtx = ramCanvas.getContext('2d');
+        // LIVE HARDWARE METRIC COLLECTION LAYER (REAL PERFORMANCE API HOOKS)
+        function launchLiveHardwareTelemetry() {
+            const latencyCanvas = document.getElementById('canvas-latency-chart');
+            const heapCanvas = document.getElementById('canvas-heap-chart');
+            const lCtx = latencyCanvas.getContext('2d');
+            const hCtx = heapCanvas.getContext('2d');
 
             setInterval(() => {
-                let nextCPU = Math.max(5, Math.min(95, cpuPoints[cpuPoints.length - 1] + (Math.random() * 20 - 10)));
-                let nextRAM = Math.max(40, Math.min(70, ramPoints[ramPoints.length - 1] + (Math.random() * 4 - 2)));
+                // Measure real execution latency (Time taken to process code within this frame)
+                let markStart = performance.now();
+                for (let i = 0; i < 20000; i++) { let dummy = i * i; } // Brief intentional load
+                let markEnd = performance.now();
+                let actualLatency = markEnd - markStart;
 
-                cpuPoints.push(nextCPU); cpuPoints.shift();
-                ramPoints.push(nextRAM); ramPoints.shift();
+                // Grab actual browser engine allocated heap size memory values if supported, or gracefully mock standard variances
+                let realHeapBytes = window.performance && performance.memory ? performance.memory.usedJSHeapSize : (20 * 1024 * 1024 + (Math.random() * 4 * 1024 * 1024));
+                let heapMegabytes = realHeapBytes / (1024 * 1024);
 
-                cpuTxt.innerText = Math.floor(nextCPU) + '%';
-                ramTxt.innerText = Math.floor(nextRAM) + '%';
+                latencyBuffer.push(actualLatency); latencyBuffer.shift();
+                heapBuffer.push(heapMegabytes); heapBuffer.shift();
 
-                drawVectorTelemetryPath(cpuCanvas, cCtx, cpuPoints, '#0ea5e9');
-                drawVectorTelemetryPath(ramCanvas, rCtx, ramPoints, '#a855f7');
-            }, 250);
+                document.getElementById('latency-txt').innerText = actualLatency.toFixed(2) + ' ms';
+                document.getElementById('heap-txt').innerText = heapMegabytes.toFixed(2) + ' MB';
+
+                // Map raw metric sizes accurately to vector graphics height coordinates
+                renderDynamicTelemetryPath(latencyCanvas, lCtx, latencyBuffer, '#0ea5e9', 8);
+                renderDynamicTelemetryPath(heapCanvas, hCtx, heapBuffer, '#8b5cf6', 40);
+            }, 300);
         }
 
-        function drawVectorTelemetryPath(canvasObj, ctxObj, dataArray, colorStroke) {
+        function renderDynamicTelemetryPath(canvasObj, ctxObj, dataPoints, strokeColor, maximumYScaleBound) {
             ctxObj.clearRect(0, 0, canvasObj.width, canvasObj.height);
-            ctxObj.beginPath();
-            ctxObj.strokeStyle = colorStroke;
-            ctxObj.lineWidth = 2;
-            const xDeltaStep = canvasObj.width / (dataArray.length - 1);
+            
+            // Render tactical radar grid boxes
+            ctxObj.strokeStyle = 'rgba(255,255,255,0.015)';
+            ctxObj.lineWidth = 1;
+            for(let gridY=15; gridY<canvasObj.height; gridY+=15) {
+                ctxObj.beginPath(); ctxObj.moveTo(0, gridY); ctxObj.lineTo(canvasObj.width, gridY); ctxObj.stroke();
+            }
 
-            for (let i = 0; i < dataArray.length; i++) {
-                let currentX = i * xDeltaStep;
-                let currentY = canvasObj.height - (dataArray[i] / 100 * canvasObj.height);
-                if (i === 0) ctxObj.moveTo(currentX, currentY); else ctxObj.lineTo(currentX, currentY);
+            // Trace path geometry
+            ctxObj.beginPath();
+            ctxObj.strokeStyle = strokeColor;
+            ctxObj.lineWidth = 2;
+            let stepHorizontal = canvasObj.width / (dataPoints.length - 1);
+
+            for (let idx = 0; idx < dataPoints.length; idx++) {
+                let xCoordinate = idx * stepHorizontal;
+                // Calculate percentage altitude mapping boundaries
+                let computedPercentage = Math.min(1, dataPoints[idx] / maximumYScaleBound);
+                let yCoordinate = canvasObj.height - (computedPercentage * canvasObj.height);
+                
+                if (idx === 0) ctxObj.moveTo(xCoordinate, yCoordinate); else ctxObj.lineTo(xCoordinate, yCoordinate);
             }
             ctxObj.stroke();
         }
 
-        function streamTerminalResponse(textPayload, isHTML = false) {
-            const blockContainer = document.createElement('div');
-            blockContainer.style.marginBottom = '10px';
-            historyNode.appendChild(blockContainer);
+        // VIRTUAL INTERNAL FILE DIRECTORY LOGS
+        const virtualFS = {
+            "about.txt": `FILE PAYLOAD FOR 'about.txt':\nI am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.\nI build secure infrastructure, manage automation networks, and write clean bash scripts.`,
+            "skills.md": `FILE PAYLOAD FOR 'skills.md':\n- Advanced Community Matrix Layout Design\n- Production Webhook Triggers & Multi-Service Automation Hooking\n- Unix Core Terminal Configurations (Termux Engine Environments)\n- Architecture Coding Layout Blocks (HTML5 / Advanced CSS Blueprints)`,
+            "socials.env": `FILE PAYLOAD FOR 'socials.env':\n- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Run 'connect' to initiate secure forward tracking link)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
+        };
 
-            if (isHTML) {
-                blockContainer.innerHTML = textPayload;
-                viewportScroll.scrollTop = viewportScroll.scrollHeight;
-                return;
-            }
-
-            const messageLines = textPayload.split('\n');
-            let arrayIndex = 0;
-
-            function processLineStream() {
-                if (arrayIndex < messageLines.length) {
-                    blockContainer.innerHTML += messageLines[arrayIndex] + '<br>';
-                    if (audioCtx) playSystemAudioBeep(600, 0.008, 'square', 0.004);
-                    arrayIndex++;
-                    setTimeout(processLineStream, 15);
-                    viewportScroll.scrollTop = viewportScroll.scrollHeight;
-                }
-            }
-            processLineStream();
-        }
-
-        const neofetchHTMLPayload = `
-<div class="neofetch-card-layout">
-<div class="neofetch-avatar-code">
- 🌌█████╗ ███╗   ██╗██╗██████╗ 
-██╔══██╗████╗  ██║██║██╔══██╗
-███████║██╔██╗ ██║██║██████╔╝
-██╔══██║██║╚██╗██║██║██╔═══╝ 
-██║  ██║██║ ╚████║██║██║     
-╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     </div>
-<div class="neofetch-stats">
-<span class="c-cyan">anish</span>@<span class="c-cyan">premium_mainframe_node</span><br>
-<span class="c-sec">-----------------------------------</span><br>
-<span class="c-purple">Environment</span>: Premium Cyberpunk UI v7.2<br>
-<span class="c-purple">Kernel Engine</span>: Virtual WebKit Canvas Core<br>
-<span class="c-purple">Uptime Monitor</span>: 2 hours, 14 mins<br>
-<span class="c-purple">Shell Binary</span>: Interactive Javascript Custom Bash<br>
-<span class="c-purple">System Clocks</span>: 8 Core ARM Virtual Simulation Array
-</div>
-</div>`;
-
-        typer.addEventListener('keydown', function(event) {
-            if (event.key.length === 1 && audioCtx) {
-                playSystemAudioBeep(500 + Math.random() * 50, 0.015, 'triangle', 0.01);
-            }
-
-            if (event.key === 'Tab') {
-                event.preventDefault();
-                const inputString = typer.value.trim();
-                if (!inputString) return;
-                const stringTokens = inputString.split(' ');
-
-                if (stringTokens.length === 1) {
-                    const match = operationalBinaryList.find(bin => bin.startsWith(stringTokens[0].toLowerCase()));
-                    if (match) typer.value = match;
-                } else if (stringTokens[0].toLowerCase() === 'cat' && stringTokens.length === 2) {
-                    const fileMatch = Object.keys(virtualFS).find(file => file.startsWith(stringTokens[1].toLowerCase()));
-                    if (fileMatch) typer.value = `cat ${fileMatch}`;
-                }
-                return;
-            }
-
-            if (event.key === 'ArrowUp') {
-                event.preventDefault();
-                if (commandHistoryStack.length > 0 && internalHistoryIndex < commandHistoryStack.length - 1) {
-                    internalHistoryIndex++;
-                    typer.value = commandHistoryStack[commandHistoryStack.length - 1 - internalHistoryIndex];
-                }
-            } else if (event.key === 'ArrowDown') {
-                event.preventDefault();
-                if (internalHistoryIndex > 0) {
-                    internalHistoryIndex--;
-                    typer.value = commandHistoryStack[commandHistoryStack.length - 1 - internalHistoryIndex];
-                } else if (internalHistoryIndex === 0) {
-                    internalHistoryIndex = -1;
-                    typer.value = '';
-                }
-            }
-
+        // LINE INPUT EXECUTIVE ENGINE INTERRUPT
+        terminalTyper.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
-                initializeAudioSandbox();
-                const processedInputLine = typer.value.trim();
-                if (processedInputLine === '') return;
+                const terminalRawLine = terminalTyper.value.trim();
+                if (!terminalRawLine) return;
 
-                commandHistoryStack.push(processedInputLine);
-                internalHistoryIndex = -1;
+                logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${terminalRawLine}`;
+                terminalTyper.value = '';
 
-                historyNode.innerHTML += `<div><span class="shell-prompt">anish@gateway:<span class="shell-dir">~</span>$</span> ${processedInputLine}</div>`;
-                typer.value = '';
+                const components = terminalRawLine.split(' ');
+                const baseOpcode = components[0].toLowerCase();
+                const operationalParameter = components.slice(1).join(' ');
 
-                const lineTokens = processedInputLin
+                if (baseOpcode === 'help') {
+                    logHistory.innerHTML += `\nRegistered Platform System Executables:\n  <span class="c-cyan">ls</span>      - Survey directory log architecture map\n  <span class="c-cyan">cat</span>     - Dump stream text records inside file tokens\n  <span class="c-cyan">connect</span> - Securely bounce link to primary Discord endpoint gateway\n  <span class="c-cyan">clear</span>   - Flush tracking console line logs from viewport`;
+                } else if (baseOpcode === 'ls') {
+                    logHistory.innerHTML += `\n` + Object.keys(virtualFS).map(file => `<span class="c-cyan">${file}</span>`).join('    ');
+                } else if (baseOpcode === 'cat') {
+                    if (virtualFS[operationalParameter.toLowerCase()]) {
+                        logHistory.innerHTML += `\n` + virtualFS[operationalParameter.toLowerCase()];
+                    } else {
+                        logHistory.innerHTML += `\n<span class="c-dim">File entity index matching '${operationalParameter}' not found. Usage: cat about.txt</span>`;
+                    }
+                } else if (baseOpcode === 'connect') {
+                    logHistory.innerHTML += `\n🔗 Opening proxy redirection gate to Discord server...`;
+                    setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 800);
+                } else if (baseOpcode === 'clear') {
+                    logHistory.innerHTML = 'Workspace pipeline log history cleared.';
+                } else {
+                    logHistory.innerHTML += `\nbash: operational binary string match not found: ${baseOpcode}`;
+                }
+
+                // Force layout auto-scroll down to latest instruction line
+                scrollEngine.scrollTop = scrollEngine.scrollHeight;
+            }
+        });
+
+        // AUTO-FOCUS CONTROLLER
+        window.onload = launchLiveHardwareTelemetry;
+        document.addEventListener('click', () => terminalTyper.focus());
+    </script>
+</body>
+</html>
