@@ -69,7 +69,7 @@
             height: 100%;
             background-color: var(--matrix-green);
             box-shadow: 0 0 10px var(--matrix-green);
-            animation: load 2.6s cubic-bezier(0.1, 0.75, 0.25, 1) forwards;
+            animation: load 2.2s cubic-bezier(0.1, 0.75, 0.25, 1) forwards;
         }
 
         .status-msg {
@@ -100,8 +100,8 @@
 
         @keyframes load {
             0% { width: 0%; }
-            40% { width: 35%; }
-            65% { width: 80%; }
+            40% { width: 45%; }
+            70% { width: 85%; }
             100% { width: 100%; }
         }
 
@@ -228,7 +228,7 @@
         <div class="terminal-container">
             
             <div class="ascii-banner">
-████ shelter ███████████████████████████████
+████ ANISH █████████████████████████████████
 ██  ███  ██   ████   █████   ████  ██   ████
 ██   ██  ██  █  ██  █   ████  ███  ██  █   █
 ██  █ █  ██  █████  ████████  ███  ██  █████
@@ -257,10 +257,11 @@
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
 
-        // AUDIO CONTEXT SYSTEM FOR TERMINAL REALISM
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Safe Audio Context Instantiation
+        let audioCtx = null;
         
-        function playBeep(freq, duration, type = 'sine', volume = 0.1) {
+        function playBeep(freq, duration, type = 'sine', volume = 0.04) {
+            if (!audioCtx) return; // Skip audio cleanly if not interacted yet
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -275,7 +276,7 @@
             } catch(e) {}
         }
 
-        // Auto Boot Trigger
+        // Fast Boot Sequencer
         setTimeout(() => {
             bootScreen.style.opacity = '0';
             setTimeout(() => {
@@ -283,11 +284,10 @@
                 mainTerminal.style.display = 'block';
                 document.body.style.overflow = 'auto';
                 typer.focus();
-                playBeep(880, 0.15, 'triangle', 0.15); // Boot complete sound
+                playBeep(880, 0.15, 'triangle', 0.1);
             }, 400);
-        }, 2600);
+        }, 2300);
 
-        // Core Command Infrastructure
         const commands = {
             help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
             about: `ABOUT SYSTEM:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Architect. I build automated workflows, configure backend logic structures, and secure public communication channels.`,
@@ -298,7 +298,7 @@
             date: `MAINFRAME CLOCK:\n${new Date().toString()}`
         };
 
-        // REALISTIC LINE-BY-LINE OUTPUT PRINTER
+        // FIXED PRINTER ENGINE: Prints completely safe with or without audio
         function printOutputWithEffect(textStr) {
             const respDiv = document.createElement('div');
             respDiv.className = 'command-response';
@@ -310,16 +310,18 @@
             function printLine() {
                 if (currentLine < lines.length) {
                     respDiv.innerHTML += lines[currentLine] + '<br>';
-                    playBeep(600, 0.03, 'square', 0.04); // Simulated teletype text crunch noise
+                    if (audioCtx) {
+                        playBeep(550, 0.02, 'square', 0.02);
+                    }
                     currentLine++;
-                    setTimeout(printLine, 35); // Speed spacing delay per terminal row
+                    setTimeout(printLine, 25);
                     mainTerminal.scrollTop = mainTerminal.scrollHeight;
                 }
             }
             printLine();
         }
 
-        // --- MATRIX BACKGROUND RENDERING SYSTEM ---
+        // --- MATRIX CANVAS LAYER ---
         let matrixInterval;
         function toggleMatrixRain() {
             if (canvas.style.display === 'block') {
@@ -332,7 +334,7 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            const letters = '0123456789ABCDEFHIJKLMNOPQRSTUVWXYZ$#@%';
+            const letters = '0123456789ABCDEF';
             const fontSize = 14;
             const columns = canvas.width / fontSize;
             const drops = Array(Math.floor(columns)).fill(1);
@@ -353,7 +355,7 @@
                 }
             }
             matrixInterval = setInterval(draw, 33);
-            return "Matrix digital stream successfully deployed to system canvas layer.";
+            return "Matrix stream activated successfully.";
         }
 
         function resizeCanvas() {
@@ -361,15 +363,13 @@
             canvas.height = window.innerHeight;
         }
 
-        // KEYBOARD EVENT LOGGER & COMMAND EVALUATION
+        // Input Engine & Double Space Auto-Complete
         let lastSpacePress = 0;
         typer.addEventListener('keydown', function(event) {
-            // Simulated subtle keyboard clack sounds
-            if (event.key.length === 1) {
-                playBeep(400 + Math.random() * 100, 0.02, 'triangle', 0.08);
+            if (event.key.length === 1 && audioCtx) {
+                playBeep(380 + Math.random() * 80, 0.02, 'triangle', 0.05);
             }
 
-            // AUTO-COMPLETE FEATURE (Double-tap space bar to auto-complete commands)
             if (event.key === ' ') {
                 const now = Date.now();
                 if (now - lastSpacePress < 300) {
@@ -378,7 +378,6 @@
                     const match = Object.keys(commands).concat(['clear', 'connect', 'matrix']).find(c => c.startsWith(currentInput));
                     if (match) {
                         typer.value = match;
-                        playBeep(700, 0.05, 'sine', 0.1);
                     }
                     return;
                 }
@@ -386,25 +385,23 @@
             }
 
             if (event.key === 'Enter') {
-                audioCtx.resume();
+                initAudio();
                 const input = typer.value.trim().toLowerCase();
                 if (input === '') return;
 
-                // Echo typed command prompt line entry 
                 history.innerHTML += `<div><span class="prompt">guest@anish_terminal:~$</span> ${typer.value}</div>`;
                 
                 if (input === 'clear') {
                     history.innerHTML = '';
                     typer.value = '';
-                    playBeep(300, 0.1, 'sine', 0.1);
                     return;
                 }
                 
                 if (input === 'connect' || input === 'discord') {
-                    printOutputWithEffect(`🔗 Rerouting trace link... Initializing handshake with Discord server instance.`);
+                    printOutputWithEffect(`🔗 Opening secure gateway to Discord server instance...`);
                     setTimeout(() => {
                         window.location.href = "https://discord.gg/wwqtGYu7q";
-                    }, 1000);
+                    }, 800);
                     typer.value = '';
                     return;
                 }
@@ -412,12 +409,11 @@
                 let response = '';
                 if (input === 'matrix') {
                     response = toggleMatrixRain();
-                    playBeep(520, 0.12, 'sine', 0.1);
                 } else if (commands[input]) {
                     response = commands[input];
                 } else {
-                    response = `<span class="red-text">Core Trace Error: '${input}' terminal directive not established. Type 'help' for paths.</span>`;
-                    playBeep(220, 0.25, 'sawtooth', 0.12); // Invalid command error beep
+                    response = `<span class="red-text">Error: Directive '${input}' unrecognized. Type 'help' for layout map.</span>`;
+                    if (audioCtx) playBeep(200, 0.2, 'sawtooth', 0.08);
                 }
 
                 printOutputWithEffect(response);
@@ -425,12 +421,20 @@
             }
         });
 
-        // Ensure input field is locked active on site viewport touch
-        document.addEventListener('click', () => {
-            typer.focus();
+        // Initialize audio engine instantly upon user interaction
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
             if (audioCtx.state === 'suspended') {
+                audioCtx.focus;
                 audioCtx.resume();
             }
+        }
+
+        document.addEventListener('click', () => {
+            initAudio();
+            typer.focus();
         });
     </script>
 </body>
