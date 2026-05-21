@@ -125,7 +125,7 @@
 
         .terminal-viewport {
             padding: 15px;
-            height: 260px;
+            height: 280px;
             overflow-y: auto;
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
@@ -294,7 +294,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
-        // STABLE FIX: Hard values set directly into attributes to bypass mobile rendering blocks
+        // SECURE ADAPTIVE DYNAMIC CANVAS BOX CONFIGURATOR
         function adaptCanvasBoundaries() {
             const targets = ['globe-render-canvas', 'canvas-latency-chart', 'canvas-heap-chart'];
             targets.forEach(id => {
@@ -315,6 +315,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
         
         window.addEventListener('resize', adaptCanvasBoundaries);
 
+        // VECTOR CORE: ROTATING MATRIX GLOBE ENGINE
         function initializeRotatingGlobe() {
             const canvas = document.getElementById('globe-render-canvas');
             if(!canvas) return;
@@ -327,6 +328,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 const centerY = canvas.height / 2;
                 const radius = Math.min(55, canvas.height * 0.45);
 
+                // Atmosphere Border
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
                 ctx.strokeStyle = 'rgba(14, 165, 233, 0.2)';
@@ -335,6 +337,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
 
                 globeRotationAngle += 0.008;
 
+                // Longitude Coordinate Lines
                 for (let i = 0; i < 7; i++) {
                     let angleOffset = (i * Math.PI / 7) + globeRotationAngle;
                     let horizontalRadiusScale = Math.sin(angleOffset) * radius;
@@ -346,6 +349,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                     ctx.stroke();
                 }
 
+                // Latitude Parallel Mesh Bands
                 for (let j = 1; j < 6; j++) {
                     let sliceY = centerY - radius + (j * (radius * 2) / 6);
                     let delta = centerY - sliceY;
@@ -364,6 +368,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             drawGlobeFrame();
         }
 
+        // TELEMETRY RECONSTRUCTION ENGINE
         function launchLiveHardwareTelemetry() {
             const latencyCanvas = document.getElementById('canvas-latency-chart');
             const heapCanvas = document.getElementById('canvas-heap-chart');
@@ -404,6 +409,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             ctxObj.stroke();
         }
 
+        // DIGITAL RAIN MATRIX ENGINE
         function setupMatrixBackground() {
             const ctx = mCanvas.getContext('2d');
             mCanvas.width = window.innerWidth;
@@ -431,6 +437,7 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
             setInterval(draw, 30);
         }
 
+        // CUSTOM BASH FILE SYSTEM LAYER
         const virtualFS = {
             "about.txt": `I am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect. Current tasking: writing anti-raid protection blocks.`,
             "skills.md": `- Discord Automation & Webhook Integration\n- Security Log Tracking Analysis\n- Front-End Dashboard Interfaces`,
@@ -474,5 +481,4 @@ Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 } else if (baseOpcode === 'guard') {
                     logHistory.innerHTML += `\n<span class="c-purple">== ACTIVE THRESHOLD DEFENSES ==</span>\n- Max Channel Deletions: <span class="c-orange">2 per 10s</span>\n- Anti-Mass Ban Trigger: <span class="c-orange">Enabled (Max 3)</span>\n- Rogue Bot Block Filter: <span class="c-green">STRICT ON</span>`;
                 } else if (baseOpcode === 'logs') {
-                    logHistory.innerHTML += `\n<span class="c-dim">[14:32:01] Rogue invite link generation intercepted. link revoked.</span>\n<span class="c-red">[18:05:44] WARN: User trying to prune roles. Action blocked.</span>\n<span class="c-green">[21:11:02] Anti-Nuke filters synchronized perfectly.</span>`;
-                } else if (baseOpcode === 'mo
+                    logHistory.innerHTML += `\n<span class="c-dim">[14:32:01] Rogue invite li
