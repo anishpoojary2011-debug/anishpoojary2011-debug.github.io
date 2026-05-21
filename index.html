@@ -24,10 +24,10 @@
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* LOADING INTRO SCREEN */
+        /* LOADING INTRO SCREEN - FORCED VISIBLE STYLING */
         #boot-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -36,6 +36,7 @@
             justify-content: center;
             align-items: center;
             z-index: 99999;
+            opacity: 1;
             transition: opacity 0.4s ease;
         }
 
@@ -62,7 +63,6 @@
 
         .premium-loader-bar {
             width: 0%; height: 100%;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
             background: linear-gradient(90deg, var(--cyan), var(--purple));
             box-shadow: 0 0 15px var(--cyan);
             animation: load-execute 1.8s ease-in-out forwards;
@@ -97,7 +97,7 @@
 
         /* SPLIT SCREEN WORKSPACE LAYOUT */
         .workspace-grid {
-            display: none;
+            display: none; /* Kept hidden until loader finishes */
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
@@ -114,13 +114,11 @@
             }
         }
 
-        /* IDE PLATFORM PANELS */
         .panel-box {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
@@ -131,7 +129,6 @@
             height: 35px;
             display: flex;
             align-items: center;
-            gap: 5px;
             border-bottom: 1px solid var(--border);
         }
 
@@ -144,10 +141,8 @@
             border-radius: 6px 6px 0 0;
             border: 1px solid var(--border);
             border-bottom: none;
-            font-weight: 500;
         }
 
-        /* INTERACTIVE TERMINAL WINDOW */
         .terminal-viewport {
             padding: 15px;
             height: 320px;
@@ -156,9 +151,6 @@
             font-size: 0.85rem;
             line-height: 1.6;
         }
-
-        .terminal-viewport::-webkit-scrollbar { width: 5px; }
-        .terminal-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
         .terminal-log-output {
             color: #cbd5e1;
@@ -176,7 +168,6 @@
             color: var(--purple);
             font-weight: bold;
             margin-right: 8px;
-            white-space: nowrap;
         }
 
         .terminal-input-field {
@@ -189,7 +180,6 @@
             width: 100%;
         }
 
-        /* TELEMETRY METRIC FEED MODULES */
         .telemetry-stack {
             padding: 15px;
             display: flex;
@@ -224,13 +214,11 @@
             background: #02040a;
             border-radius: 4px;
             display: block;
-            border: 1px solid rgba(255, 255, 255, 0.01);
         }
 
         .c-cyan { color: var(--cyan); }
         .c-purple { color: var(--purple); }
         .c-green { color: var(--green); }
-        .c-dim { color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -253,50 +241,31 @@
     </div>
 
     <div class="workspace-grid" id="main-workspace">
-        
         <div class="panel-box">
-            <div class="panel-tab-bar">
-                <div class="tab-pill">bash_terminal.sh</div>
-            </div>
+            <div class="panel-tab-bar"><div class="tab-pill">bash_terminal.sh</div></div>
             <div class="terminal-viewport" id="scroll-engine-box">
-                <div class="terminal-log-output" id="console-log-history">Welcome to the advanced live engine infrastructure hub.
-* Telemetry Engine: Real performance tracking API hooks active.
-
-Type <span class="c-cyan">'help'</span> to view target tools.
-Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
-                
+                <div class="terminal-log-output" id="console-log-history">Welcome to the real-time operational monitoring node grid.
+Type <span class="c-cyan">'help'</span> to look up system instructions.</div>
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
-                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" placeholder="Execute operation..." inputmode="text">
+                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" placeholder="Execute operation...">
                 </div>
             </div>
         </div>
 
         <div class="panel-box">
-            <div class="panel-tab-bar">
-                <div class="tab-pill">telemetry_dashboard.conf</div>
-            </div>
+            <div class="panel-tab-bar"><div class="tab-pill">telemetry_dashboard.conf</div></div>
             <div class="telemetry-stack">
-                
                 <div class="chart-card">
-                    <div class="chart-header-row">
-                        <span>DOM Script Processing Delay</span>
-                        <span class="value-badge c-cyan" id="latency-txt">0.0 ms</span>
-                    </div>
+                    <div class="chart-header-row"><span>DOM Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.0 ms</span></div>
                     <canvas id="canvas-latency-chart" class="canvas-render-frame" width="320" height="65"></canvas>
                 </div>
-
                 <div class="chart-card">
-                    <div class="chart-header-row">
-                        <span>Allocated Virtual Heap Memory</span>
-                        <span class="value-badge c-purple" id="heap-txt">0.00 MB</span>
-                    </div>
+                    <div class="chart-header-row"><span>Allocated JS Memory Heap</span><span class="value-badge c-purple" id="heap-txt">0.00 MB</span></div>
                     <canvas id="canvas-heap-chart" class="canvas-render-frame" width="320" height="65"></canvas>
                 </div>
-
             </div>
         </div>
-
     </div>
 
     <script>
@@ -314,16 +283,18 @@ Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
             clockPanel.textContent = new Date().toLocaleTimeString();
         }, 1000);
 
-        // TRANSITION BOOT TIMEOUT
-        setTimeout(() => {
-            bootScreen.style.opacity = '0';
+        // This triggers the transition cleanly after 2 seconds
+        window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                bootScreen.style.display = 'none';
-                workspaceGrid.style.display = 'grid';
-                terminalTyper.focus();
-                launchLiveHardwareTelemetry();
-            }, 400);
-        }, 2000);
+                bootScreen.style.opacity = '0';
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    workspaceGrid.style.display = 'grid';
+                    if(terminalTyper) terminalTyper.focus();
+                    launchLiveHardwareTelemetry();
+                }, 400);
+            }, 2200);
+        });
 
         function launchLiveHardwareTelemetry() {
             const latencyCanvas = document.getElementById('canvas-latency-chart');
@@ -335,7 +306,7 @@ Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
 
             setInterval(() => {
                 let markStart = performance.now();
-                for (let i = 0; i < 15000; i++) { let d = i * i; } 
+                for (let i = 0; i < 10000; i++) { let d = i * i; } 
                 let markEnd = performance.now();
                 let actualLatency = markEnd - markStart;
 
@@ -371,9 +342,9 @@ Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
         }
 
         const virtualFS = {
-            "about.txt": `I am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.\nI build secure permissions models, configure backend workers, and design advanced dashboard layout schemes.`,
-            "skills.md": `- Production Discord Guild Configuration & Safety Systems\n- Advanced Automation Engine Deployments & API Hooks\n- Linux Bash scripting setups (Termux & Native Virtual Environments)\n- Front-End Web Application Architecture UI Design`,
-            "socials.env": `- <span class="c-green">Instagram</span>: @__miku._.chan_\n- <span class="c-green">Discord</span>: @anish (Execute command 'connect' to initiate gateway bridge redirect link)\n- <span class="c-green">GitHub</span>: anishpoojary2011-debug`
+            "about.txt": `I am an experienced <span class="c-cyan">Discord Server Manager</span> and Community Infrastructure Architect.`,
+            "skills.md": `- Discord Automation & Webhook Integration\n- Linux Bash Scripting Environments\n- Front-End Dashboard Interfaces`,
+            "socials.env": `- Instagram: @__miku._.chan_\n- Discord: @anish\n- GitHub: anishpoojary2011-debug`
         };
 
         terminalTyper.addEventListener('keydown', function(event) {
@@ -389,29 +360,29 @@ Type <span class="c-cyan">'ls'</span> to list active directory nodes.</div>
                 const operationalParameter = components.slice(1).join(' ');
 
                 if (baseOpcode === 'help') {
-                    logHistory.innerHTML += `\nRegistered Mainframe Shell Directives:\n  <span class="c-cyan">ls</span>      - Survey available record logs\n  <span class="c-cyan">cat</span>     - Dump content block stream inside text targets\n  <span class="c-cyan">connect</span> - Engage automatic proxy forward link to Discord node\n  <span class="c-cyan">clear</span>   - Flush tracking lines out of current active view viewport`;
+                    logHistory.innerHTML += `\nDirectives:\n  <span class="c-cyan">ls</span>      - List records\n  <span class="c-cyan">cat</span>     - Read files\n  <span class="c-cyan">connect</span> - Open Discord link\n  <span class="c-cyan">clear</span>   - Clear terminal window`;
                 } else if (baseOpcode === 'ls') {
                     logHistory.innerHTML += `\n` + Object.keys(virtualFS).map(file => `<span class="c-cyan">${file}</span>`).join('    ');
                 } else if (baseOpcode === 'cat') {
                     if (virtualFS[operationalParameter.toLowerCase()]) {
                         logHistory.innerHTML += `\n` + virtualFS[operationalParameter.toLowerCase()];
                     } else {
-                        logHistory.innerHTML += `\n<span class="c-dim">File parameter match not found for: '${operationalParameter}'. Check usage layout maps via 'ls'.</span>`;
+                        logHistory.innerHTML += `\nFile not found. Try 'cat about.txt'`;
                     }
                 } else if (baseOpcode === 'connect') {
-                    logHistory.innerHTML += `\n🔗 Dispatching proxy gateway request. Establishing contact route hook...`;
+                    logHistory.innerHTML += `\n🔗 Launching Discord redirection...`;
                     setTimeout(() => { window.location.href = "https://discord.gg/wwqtGYu7q"; }, 800);
                 } else if (baseOpcode === 'clear') {
-                    logHistory.innerHTML = 'Terminal tracking log space cleared.';
+                    logHistory.innerHTML = 'Terminal history logs cleared.';
                 } else {
-                    logHistory.innerHTML += `\nbash: script parser error: command instruction string unmapped: '${baseOpcode}'`;
+                    logHistory.innerHTML += `\nbash: command not found: '${baseOpcode}'`;
                 }
 
                 scrollEngine.scrollTop = scrollEngine.scrollHeight;
             }
         });
 
-        document.addEventListener('click', () => terminalTyper.focus());
+        document.addEventListener('click', () => { if(terminalTyper) terminalTyper.focus(); });
     </script>
 </body>
 </html>
