@@ -204,7 +204,7 @@
         <div class="boot-container">
             <div class="boot-header">
                 <span>ANISH_MAINFRAME</span>
-                <span>v4.0.2</span>
+                <span>v4.5.0</span>
             </div>
             <div class="progress-bar-container">
                 <div class="progress-bar"></div>
@@ -257,11 +257,10 @@
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Safe Audio Context Instantiation
         let audioCtx = null;
         
         function playBeep(freq, duration, type = 'sine', volume = 0.04) {
-            if (!audioCtx) return; // Skip audio cleanly if not interacted yet
+            if (!audioCtx) return;
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -288,17 +287,21 @@
             }, 400);
         }, 2300);
 
+        // Maxed-out Command Registry
         const commands = {
-            help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
+            help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">system</span>   - Inspect terminal kernel metrics & hardware resources\n  <span class="blue-text">sudo</span>     - Attempt root privilege execution mode\n  <span class="blue-text">contact</span>  - Pull request protocol for business inquiries\n  <span class="blue-text">motd</span>     - Display system message of the day\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
             about: `ABOUT SYSTEM:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Architect. I build automated workflows, configure backend logic structures, and secure public communication channels.`,
             skills: `CAPABILITIES:\n- Server Infrastructure Management\n- API Automation & Advanced Discord Integrations\n- Linux Environment Engineering (Termux & Kali Core)\n- Frontend Web Structures (HTML5 / CSS3 Layouts)`,
             projects: `OPERATIONAL DEPLOYMENTS:\n- <span class="yellow-text">24/7 Discord Automation Bot</span>: Designing persistent operational code routines.\n- <span class="yellow-text">Gateway Routing Server</span>: Managing network permissions, bot logic, and scaling rules.\n- <span class="yellow-text">Terminal Portfolio Webframe</span>: Compiled natively from mobile terminal containers.`,
             socials: `COMMUNICATION LINKS:\n- <span class="yellow-text">Instagram</span>: @__miku._.chan_\n- <span class="yellow-text">Discord</span>: @anish (Command 'connect' routes instantly)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
+            system: `KERNEL METRICS:\n----------------------------------------\nOS Node: <span class="yellow-text">Termux Web Environment v4.5.0</span>\nCPU Allocation: <span class="matrix-green">[██████░░░░] 58.2%</span>\nRAM Consumption: <span class="matrix-green">2.41 GB / 8.00 GB</span>\nMainframe Uptime: <span class="yellow-text">14 Days, 6 Hours, 12 Mins</span>\nNetwork Ping Link: <span class="matrix-green">14ms (Optimal)</span>\n----------------------------------------`,
+            sudo: `<span class="red-text">❌ USER PRIVILEGE EXCEPTION.</span>\n guest_user is not in the sudoers file. This incident has been logged and reported to the system administrator (@anish).`,
+            contact: `COMMUNICATION PROTOCOL:\nWant to collaborate or hire me for Discord server management / bot configuration?\n\n📩 DM on Instagram: <span class="yellow-text">@__miku._.chan_</span>\n💬 Drop a line in my Discord Server using the <span class="blue-text">'connect'</span> directive.`,
+            motd: `📢 MESSAGE OF THE DAY:\n"The best way to protect any backend node is to configure its automated components flawlessly."\n- Status: Developing 24/7 Automation Bots right from a mobile core.`,
             whoami: `TRACE INFO:\nUser Node: guest_user\nRoot Host: anish_terminal_core\nShell Type: Interactive Web-Bash\nConnection: Encrypted HTTPS`,
             date: `MAINFRAME CLOCK:\n${new Date().toString()}`
         };
 
-        // FIXED PRINTER ENGINE: Prints completely safe with or without audio
         function printOutputWithEffect(textStr) {
             const respDiv = document.createElement('div');
             respDiv.className = 'command-response';
@@ -363,13 +366,13 @@
             canvas.height = window.innerHeight;
         }
 
-        // Input Engine & Double Space Auto-Complete
         let lastSpacePress = 0;
         typer.addEventListener('keydown', function(event) {
             if (event.key.length === 1 && audioCtx) {
                 playBeep(380 + Math.random() * 80, 0.02, 'triangle', 0.05);
             }
 
+            // Quick Double Space Tab Completion Setup
             if (event.key === ' ') {
                 const now = Date.now();
                 if (now - lastSpacePress < 300) {
@@ -421,13 +424,11 @@
             }
         });
 
-        // Initialize audio engine instantly upon user interaction
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
             if (audioCtx.state === 'suspended') {
-                audioCtx.focus;
                 audioCtx.resume();
             }
         }
