@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* --- BOOT LOADING SCREEN STYLES --- */
+        /* --- BOOT LOADING SCREEN --- */
         #boot-screen {
             position: fixed;
             top: 0;
@@ -104,7 +104,7 @@
             100% { width: 100%; }
         }
 
-        /* --- TERMINAL INTERFACE STYLES --- */
+        /* --- TERMINAL INTERFACE --- */
         #main-terminal {
             display: none;
             width: 100%;
@@ -112,6 +112,8 @@
             padding: 20px;
             overflow-y: auto;
             box-sizing: border-box;
+            position: relative;
+            z-index: 2;
         }
 
         .terminal-container {
@@ -120,15 +122,22 @@
             margin: 20px auto 0 auto;
         }
 
-        .welcome-text {
+        .ascii-banner {
             color: var(--matrix-green);
-            text-shadow: 0 0 5px var(--matrix-green);
+            font-size: 0.75rem;
+            line-height: 1.2;
+            white-space: pre;
             margin-bottom: 20px;
-            line-height: 1.4;
-            white-space: pre-wrap;
-            border: 2px solid var(--matrix-green);
-            padding: 15px;
-            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1), 0 0 10px rgba(0, 255, 102, 0.1);
+            font-weight: bold;
+            text-shadow: 0 0 3px var(--matrix-green);
+            overflow-x: auto;
+        }
+
+        .welcome-text {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 0.95rem;
         }
 
         .output-history {
@@ -141,7 +150,7 @@
             display: flex;
             align-items: center;
             width: 100%;
-            padding-bottom: 50px;
+            padding-bottom: 60px;
         }
 
         .prompt {
@@ -169,29 +178,44 @@
         .blue-text { color: #38bdf8; }
         .yellow-text { color: #f59e0b; }
         .red-text { color: #ef4444; }
+
+        /* --- MATRIX CANVAS BACKGROUND --- */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: none;
+            opacity: 0.3;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
+
+    <canvas id="matrix-canvas"></canvas>
 
     <div id="boot-screen">
         <div class="boot-container">
             <div class="boot-header">
                 <span>SYSTEM BOOT</span>
-                <span>v2.8.0</span>
+                <span>v3.5.0</span>
             </div>
             <div class="progress-bar-container">
                 <div class="progress-bar"></div>
             </div>
-            <div class="status-msg">COMPILING ASSETS...</div>
+            <div class="status-msg">INITIALIZING MATRIX...</div>
             
             <div class="system-checks">
                 <div class="check-item">
-                    <span>> Memory check</span>
-                    <span class="check-ok">OK</span>
+                    <span>> Core Environment</span>
+                    <span class="check-ok">READY</span>
                 </div>
                 <div class="check-item">
-                    <span>> Loading modules</span>
-                    <span class="check-ok">DONE</span>
+                    <span>> Decrypting Files</span>
+                    <span class="check-ok">SUCCESS</span>
                 </div>
             </div>
         </div>
@@ -199,9 +223,19 @@
 
     <div id="main-terminal">
         <div class="terminal-container">
-            <div id="banner-view" class="welcome-text">📊 ANISH PORTFOLIO SYSTEM [Version 3.0.0]
-🔒 STATUS: SECURE_
-💡 Type 'help' to view available commands.</div>
+            
+            <div class="ascii-banner">
+████ shelter ███████████████████████████████
+██  ███  ██   ████   █████   ████  ██   ████
+██   ██  ██  █  ██  █   ████  ███  ██  █   █
+██  █ █  ██  █████  ████████  ███  ██  █████
+██  ██   ██  █  ██  █   ████  ███  ██  █   █
+██  ███  ██  █  ██   ██████  ████  ██   ████
+████████████████████████████████████████████</div>
+
+            <div id="banner-view" class="welcome-text">📊 CORE TERMINAL BRIDGE ACTIVE
+🔒 LOGGED IN AS: guest@anish_gateway
+💡 Type <span class="blue-text">'help'</span> to show authorized system paths.</div>
 
             <div id="history" class="output-history"></div>
 
@@ -217,8 +251,10 @@
         const mainTerminal = document.getElementById('main-terminal');
         const typer = document.getElementById('terminal-typer');
         const history = document.getElementById('history');
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
 
-        // Transition content after loader finishes
+        // Loader Sequence
         setTimeout(() => {
             bootScreen.style.opacity = '0';
             setTimeout(() => {
@@ -229,52 +265,16 @@
             }, 500);
         }, 2800);
 
-        // Command Registry with updated handle
+        // System Commands Data
         const commands = {
-            help: `Available Commands:\n  <span class="blue-text">about</span>    - Learn more about me\n  <span class="blue-text">skills</span>   - View my technical skill set\n  <span class="blue-text">projects</span> - See my active work\n  <span class="blue-text">socials</span>  - Get my networking profiles\n  <span class="blue-text">whoami</span>   - Display current terminal session info\n  <span class="blue-text">date</span>     - Show current date & time\n  <span class="blue-text">banner</span>   - Display welcome matrix box\n  <span class="blue-text">matrix</span>   - Secret system message\n  <span class="blue-text">connect</span>  - Jump straight to my Discord server\n  <span class="blue-text">clear</span>    - Clear the terminal screen`,
-            about: `ABOUT ME:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Builder. I specialize in setting up secure backend systems, automation bots, and moderation workflows.`,
-            skills: `TECHNICAL SKILLS:\n- Community Management & Moderation\n- Discord API & Advanced Bot Integrations\n- Linux Operations (Termux / Kali Linux)\n- Frontend Web Development (HTML / CSS)`,
-            projects: `ACTIVE PROJECTS:\n- <span class="yellow-text">24/7 Discord Bot Development</span>: Designing and hosting continuous automation tools.\n- <span class="yellow-text">Community Server Gateway</span>: Active management, bot routing, and custom roles.\n- <span class="yellow-text">Personal Portfolio</span>: Built directly from a mobile device container.`,
-            socials: `SOCIAL CHANNELS:\n- <span class="yellow-text">Instagram</span>: @__miku._.chan_\n- <span class="yellow-text">Discord</span>: @anish (Use 'connect' to join my server)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
-            whoami: `SESSION INFO:\nUser: guest\nHost: anish_terminal\nPrivileges: Standard User\nEnvironment: Termux Core Web Shell`,
-            date: `CURRENT DATE & TIME:\n${new Date().toString()}`,
-            matrix: `<span class="red-text">"Wake up, Neo... The Matrix has you..."</span>\nEverything you see here was built using code commands on a mobile terminal setup.`,
-            banner: `📊 ANISH PORTFOLIO SYSTEM [Version 3.0.0]\n🔒 STATUS: SECURE_\n💡 Type 'help' to view available commands.`
+            help: `System Paths Available:\n  <span class="blue-text">about</span>    - Query administration details\n  <span class="blue-text">skills</span>   - List functional capabilities\n  <span class="blue-text">projects</span> - View operational deployments\n  <span class="blue-text">socials</span>  - Fetch external networks\n  <span class="blue-text">whoami</span>   - Print active encryption node\n  <span class="blue-text">date</span>     - Pull mainframe clock configuration\n  <span class="blue-text">matrix</span>   - Toggle live digital stream override\n  <span class="blue-text">connect</span>  - Forward directly to active Discord link\n  <span class="blue-text">clear</span>    - Wipe current console trace`,
+            about: `ABOUT SYSTEM:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Architect. I build automated workflows, configure backend logic structures, and secure public communication channels.`,
+            skills: `CAPABILITIES:\n- Server Infrastructure Management\n- API Automation & Advanced Discord Integrations\n- Linux Environment Engineering (Termux & Kali Core)\n- Frontend Web Structures (HTML5 / CSS3 Layouts)`,
+            projects: `OPERATIONAL DEPLOYMENTS:\n- <span class="yellow-text">24/7 Discord Automation Bot</span>: Designing persistent operational code routines.\n- <span class="yellow-text">Gateway Routing Server</span>: Managing network permissions, bot logic, and scaling rules.\n- <span class="yellow-text">Terminal Portfolio Webframe</span>: Compiled natively from mobile terminal containers.`,
+            socials: `COMMUNICATION LINKS:\n- <span class="yellow-text">Instagram</span>: @__miku._.chan_\n- <span class="yellow-text">Discord</span>: @anish (Command 'connect' routes instantly)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
+            whoami: `TRACE INFO:\nUser Node: guest_user\nRoot Host: anish_terminal_core\nShell Type: Interactive Web-Bash\nConnection: Encrypted HTTPS`,
+            date: `MAINFRAME CLOCK:\n${new Date().toString()}`
         };
 
-        typer.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                const input = typer.value.trim().toLowerCase();
-                if (input === '') return;
-
-                let response = '';
-                
-                if (input === 'clear') {
-                    history.innerHTML = '';
-                    typer.value = '';
-                    return;
-                } else if (input === 'connect' || input === 'discord') {
-                    history.innerHTML += `<div><span class="prompt">guest@anish_terminal:~$</span> ${typer.value}</div>`;
-                    history.innerHTML += `<div class="command-response">🔗 Redirecting to Discord Server...</div>`;
-                    window.location.href = "https://discord.gg/wwqtGYu7q";
-                    typer.value = '';
-                    return;
-                } else if (commands[input]) {
-                    response = commands[input];
-                } else {
-                    response = `<span class="red-text">Command not found: '${input}'. Type 'help' for available commands.</span>`;
-                }
-
-                history.innerHTML += `<div><span class="prompt">guest@anish_terminal:~$</span> ${typer.value}</div>`;
-                history.innerHTML += `<div class="command-response">${response}</div>`;
-                
-                typer.value = '';
-                
-                setTimeout(() => {
-                    mainTerminal.scrollTop = mainTerminal.scrollHeight;
-                }, 10);
-            }
-        });
-    </script>
-</body>
-</html>
+        // --- MATRIX RAIN GENERATOR ---
+        let matrix
