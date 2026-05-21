@@ -141,7 +141,7 @@
             display: flex;
             align-items: center;
             width: 100%;
-            padding-bottom: 50px; /* Space for mobile keyboard layout */
+            padding-bottom: 50px;
         }
 
         .prompt {
@@ -217,7 +217,6 @@
         const mainTerminal = document.getElementById('main-terminal');
         const typer = document.getElementById('terminal-typer');
         const history = document.getElementById('history');
-        const bannerView = document.getElementById('banner-view');
 
         // Transition content after loader finishes
         setTimeout(() => {
@@ -230,13 +229,13 @@
             }, 500);
         }, 2800);
 
-        // Extended Command Registry
+        // Command Registry with updated handle
         const commands = {
             help: `Available Commands:\n  <span class="blue-text">about</span>    - Learn more about me\n  <span class="blue-text">skills</span>   - View my technical skill set\n  <span class="blue-text">projects</span> - See my active work\n  <span class="blue-text">socials</span>  - Get my networking profiles\n  <span class="blue-text">whoami</span>   - Display current terminal session info\n  <span class="blue-text">date</span>     - Show current date & time\n  <span class="blue-text">banner</span>   - Display welcome matrix box\n  <span class="blue-text">matrix</span>   - Secret system message\n  <span class="blue-text">connect</span>  - Jump straight to my Discord server\n  <span class="blue-text">clear</span>    - Clear the terminal screen`,
             about: `ABOUT ME:\nI am a <span class="yellow-text">Discord Server Manager</span> and Community Builder. I specialize in setting up secure backend systems, automation bots, and moderation workflows.`,
             skills: `TECHNICAL SKILLS:\n- Community Management & Moderation\n- Discord API & Advanced Bot Integrations\n- Linux Operations (Termux / Kali Linux)\n- Frontend Web Development (HTML / CSS)`,
-            projects: `ACTIVE PROJECTS:\n- <span class="yellow-text">Community Server Gateway</span>: Active management, bot routing, and custom roles.\n- <span class="yellow-text">Personal Portfolio</span>: Built directly from a mobile device container.`,
-            socials: `SOCIAL CHANNELS:\n- <span class="yellow-text">Discord</span>: @anish (Use 'connect' to join my server)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
+            projects: `ACTIVE PROJECTS:\n- <span class="yellow-text">24/7 Discord Bot Development</span>: Designing and hosting continuous automation tools.\n- <span class="yellow-text">Community Server Gateway</span>: Active management, bot routing, and custom roles.\n- <span class="yellow-text">Personal Portfolio</span>: Built directly from a mobile device container.`,
+            socials: `SOCIAL CHANNELS:\n- <span class="yellow-text">Instagram</span>: @__miku._.chan_\n- <span class="yellow-text">Discord</span>: @anish (Use 'connect' to join my server)\n- <span class="yellow-text">GitHub</span>: anishpoojary2011-debug`,
             whoami: `SESSION INFO:\nUser: guest\nHost: anish_terminal\nPrivileges: Standard User\nEnvironment: Termux Core Web Shell`,
             date: `CURRENT DATE & TIME:\n${new Date().toString()}`,
             matrix: `<span class="red-text">"Wake up, Neo... The Matrix has you..."</span>\nEverything you see here was built using code commands on a mobile terminal setup.`,
@@ -271,7 +270,6 @@
                 
                 typer.value = '';
                 
-                // Automatically auto-scroll to the bottom input line
                 setTimeout(() => {
                     mainTerminal.scrollTop = mainTerminal.scrollHeight;
                 }, 10);
