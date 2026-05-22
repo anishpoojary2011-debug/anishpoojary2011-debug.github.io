@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>anish@production-node:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght=300;400;500;600;700&display=swap');
         
         :root {
             --bg: #02040a;
@@ -39,9 +39,7 @@
             color: var(--text-dim); box-sizing: border-box;
         }
 
-        .status-indicator {
-            display: flex; align-items: center; gap: 6px;
-        }
+        .status-indicator { display: flex; align-items: center; gap: 6px; }
 
         .pulse-dot-orange {
             width: 8px; height: 8px;
@@ -51,158 +49,59 @@
         }
 
         .workspace-grid {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 40px;
-            padding: 12px;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
+            width: 100%; max-width: 1200px;
+            margin-top: 40px; padding: 12px;
+            box-sizing: border-box; display: grid;
+            grid-template-columns: 1fr; gap: 16px;
         }
 
-        @media(min-width: 900px) {
-            .workspace-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
+        @media(min-width: 900px) { .workspace-grid { grid-template-columns: 1fr 1fr; } }
 
         .panel-box {
             background: rgba(7, 13, 25, 0.95);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            border-radius: 8px; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
         .panel-tab-bar {
-            background: #040812;
-            padding: 0 12px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+            background: #040812; padding: 0 12px; height: 36px;
+            display: flex; align-items: center; border-bottom: 1px solid var(--border);
         }
 
-        .tab-pill {
-            color: var(--cyan);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.72rem;
-            font-weight: 500;
-        }
+        .tab-pill { color: var(--cyan); font-family: 'Fira Code', monospace; font-size: 0.72rem; font-weight: 500; }
 
         .terminal-viewport {
-            padding: 14px;
-            background: var(--panel-inner);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            line-height: 1.5;
-            box-sizing: border-box;
-            min-height: 280px;
+            padding: 14px; background: var(--panel-inner);
+            font-family: 'Fira Code', monospace; font-size: 0.8rem;
+            line-height: 1.5; box-sizing: border-box; min-height: 280px;
         }
 
-        .terminal-log-output {
-            color: #cbd5e1;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+        .terminal-log-output { color: #cbd5e1; white-space: pre-wrap; word-break: break-all; }
+        .input-row { display: flex; align-items: center; width: 100%; margin-top: 10px; }
+        .terminal-prompt-tag { color: var(--purple); font-weight: bold; margin-right: 6px; }
+        .terminal-input-field { background: transparent; border: none; outline: none; color: #ffffff; font-family: 'Fira Code', monospace; font-size: 0.8rem; width: 100%; }
 
-        .input-row {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .terminal-prompt-tag {
-            color: var(--purple);
-            font-weight: bold;
-            margin-right: 6px;
-        }
-
-        .terminal-input-field {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #ffffff;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            width: 100%;
-        }
-
-        .telemetry-stack {
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: var(--panel-inner);
-            box-sizing: border-box;
-        }
-
-        .chart-card {
-            background: rgba(3, 7, 18, 0.6);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 12px;
-        }
-
-        .chart-header-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            font-family: 'Fira Code', monospace;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-        }
-
+        .telemetry-stack { padding: 14px; display: flex; flex-direction: column; gap: 12px; background: var(--panel-inner); box-sizing: border-box; }
+        .chart-card { background: rgba(3, 7, 18, 0.6); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+        .chart-header-row { display: flex; justify-content: space-between; font-size: 0.7rem; font-family: 'Fira Code', monospace; color: var(--text-dim); margin-bottom: 8px; }
         .value-badge { font-weight: 700; }
 
-        .svg-container-frame {
-            width: 100%;
-            height: 65px;
-            background: #020409;
-            border-radius: 4px;
-            border: 1px solid rgba(30, 41, 59, 0.5);
-        }
+        .svg-container-frame { width: 100%; height: 65px; background: #020409; border-radius: 4px; border: 1px solid rgba(30, 41, 59, 0.5); }
+        .svg-globe-container-frame { width: 100%; height: 160px; background: #020409; border-radius: 4px; border: 1px solid rgba(30, 41, 59, 0.5); display: flex; align-items: center; justify-content: center; }
 
-        .svg-globe-container-frame {
-            width: 100%;
-            height: 140px;
-            background: #020409;
-            border-radius: 4px;
-            border: 1px solid rgba(30, 41, 59, 0.5);
-        }
+        .realtime-sys-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .mini-stat-node { background: rgba(7, 13, 25, 0.4); border: 1px solid rgba(30, 41, 59, 0.4); border-radius: 4px; padding: 6px 8px; font-size: 0.68rem; font-family: 'Fira Code', monospace; display: flex; justify-content: space-between; }
 
-        .realtime-sys-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
+        @keyframes rotateEarthMap { 0% { transform: translateX(0px); } 100% { transform: translateX(-150px); } }
+        @keyframes orbitSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .mini-stat-node {
-            background: rgba(7, 13, 25, 0.4);
-            border: 1px solid rgba(30, 41, 59, 0.4);
-            border-radius: 4px;
-            padding: 6px 8px;
-            font-size: 0.68rem;
-            font-family: 'Fira Code', monospace;
-            display: flex;
-            justify-content: space-between;
-        }
+        .earth-outline { stroke: var(--cyan); stroke-width: 1.5; fill: none; }
+        .earth-grid-lines { fill: none; stroke: rgba(14, 165, 233, 0.25); stroke-width: 0.8; }
+        .continents-layer { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; animation: rotateEarthMap 12s linear infinite; }
+        .satellite-orbit { fill: none; stroke: rgba(168, 85, 247, 0.4); stroke-width: 1; stroke-dasharray: 4 4; transform-origin: 100px 80px; animation: orbitSpin 15s linear infinite; }
 
-        @keyframes sweep {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .radar-line {
-            transform-origin: 100px 70px;
-            animation: sweep 4s linear infinite;
-        }
-
-        .neofetch-layout {
-            display: flex; gap: 12px; margin: 8px 0; font-size: 0.75rem;
-        }
+        .neofetch-layout { display: flex; gap: 12px; margin: 8px 0; font-size: 0.75rem; }
         .neofetch-logo { color: var(--cyan); font-weight: bold; line-height: 1.2; }
 
         .c-cyan { color: var(--cyan); }
@@ -232,7 +131,7 @@ Active Project: Discord Moderation Engineering.
 Type <span class="c-cyan">'help'</span> for operations.</div>
                 <div class="input-row">
                     <span class="terminal-prompt-tag">anish@gateway:~$</span>
-                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off" autocapitalize="off" autocorrect="off">
+                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off">
                 </div>
             </div>
         </div>
@@ -240,31 +139,39 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
         <div class="panel-box">
             <div class="panel-tab-bar"><div class="tab-pill">telemetry.conf</div></div>
             <div class="telemetry-stack">
-                
                 <div class="chart-card">
-                    <div class="chart-header-row">
-                        <span>Threat Intercept Radar</span>
-                        <span class="value-badge c-green">SYNCED</span>
-                    </div>
+                    <div class="chart-header-row"><span>Global Earth Core Gateway</span><span class="value-badge c-cyan">ONLINE</span></div>
                     <div class="svg-globe-container-frame">
-                        <svg viewBox="0 0 200 140" width="100%" height="100%">
-                            <circle cx="100" cy="70" r="50" fill="none" stroke="#1e293b" />
-                            <circle cx="100" cy="70" r="25" fill="none" stroke="#1e293b" />
-                            <line x1="100" y1="5" x2="100" y2="135" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="20" y1="70" x2="180" y2="70" stroke="rgba(30, 41, 59, 0.4)" />
-                            <line x1="100" y1="70" x2="100" y2="15" stroke="var(--cyan)" stroke-width="1.5" class="radar-line" />
-                            <circle cx="80" cy="50" r="3" fill="var(--red)" />
-                            <circle cx="130" cy="90" r="3" fill="var(--orange)" />
+                        <svg viewBox="0 0 200 160" width="100%" height="100%">
+                            <defs><mask id="earth-mask"><circle cx="100" cy="80" r="48" fill="#ffffff" /></mask></defs>
+                            <circle cx="100" cy="80" r="56" class="satellite-orbit" />
+                            <circle cx="139" cy="41" r="3.5" fill="var(--purple)" />
+                            <circle cx="100" cy="80" r="48" class="earth-outline" />
+                            <line x1="52" y1="80" x2="148" y2="80" class="earth-grid-lines" />
+                            <line x1="55" y1="60" x2="145" y2="60" class="earth-grid-lines" />
+                            <line x1="55" y1="100" x2="145" y2="100" class="earth-grid-lines" />
+                            <ellipse cx="100" cy="80" rx="24" ry="48" class="earth-grid-lines" />
+                            <g mask="url(#earth-mask)">
+                                <g class="continents-layer">
+                                    <path d="M70,50 Q80,45 85,55 T100,50 T115,65 T100,85 T80,95 T65,75 Z" />
+                                    <path d="M110,90 Q120,80 130,95 T140,110 T125,115 Z" />
+                                    <path d="M120,45 Q130,40 135,50 T125,65 Z" />
+                                    <path d="M220,50 Q230,45 235,55 T250,50 T265,65 T250,85 T230,95 T215,75 Z" />
+                                    <path d="M260,90 Q270,80 280,95 T290,110 T275,115 Z" />
+                                    <path d="M270,45 Q280,40 285,50 T275,65 Z" />
+                                </g>
+                            </g>
+                            <circle cx="95" cy="65" r="3" fill="var(--green)" />
+                            <circle cx="120" cy="90" r="2.5" fill="var(--orange)" />
+                            <circle cx="75" cy="85" r="3" fill="var(--red)" />
                         </svg>
                     </div>
                 </div>
-
                 <div class="realtime-sys-grid">
                     <div class="mini-stat-node"><span>CPU:</span><span class="c-green" id="stat-cpu">12.4%</span></div>
                     <div class="mini-stat-node"><span>PACKETS:</span><span class="c-cyan" id="stat-packets">1,420/s</span></div>
                 </div>
-
-                <div class="chart-card">
+                 <div class="chart-card">
                     <div class="chart-header-row"><span>Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.40 ms</span></div>
                     <div class="svg-container-frame">
                         <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
