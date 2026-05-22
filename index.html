@@ -5,142 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>anish@production-node:~</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght=300;400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
         :root {
-            --bg: #02040a;
-            --panel: #070d19;
-            --panel-inner: #040710;
-            --border: #1e293b;
-            --cyan: #0ea5e9;
-            --purple: #a855f7;
-            --green: #10b981;
-            --orange: #f97316;
-            --red: #ef4444;
-            --text: #f8fafc;
-            --text-dim: #64748b;
+            --bg: #02040a; --panel: #070d19; --panel-inner: #040710; --border: #1e293b;
+            --cyan: #0ea5e9; --purple: #a855f7; --green: #10b981; --orange: #f97316;
+            --red: #ef4444; --text: #f8fafc; --text-dim: #64748b;
         }
-
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; min-height: 100%;
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .status-header-bar {
-            width: 100%; height: 40px;
-            background: #040812;
-            border-bottom: 1px solid var(--border);
-            position: fixed; top: 0; left: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 12px; font-size: 0.72rem; font-family: 'Fira Code', monospace;
-            color: var(--text-dim); box-sizing: border-box;
-        }
-
+        body, html { margin: 0; padding: 0; width: 100%; min-height: 100%; background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        .status-header-bar { width: 100%; height: 40px; background: #040812; border-bottom: 1px solid var(--border); position: fixed; top: 0; left: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 0.72rem; font-family: 'Fira Code', monospace; color: var(--text-dim); box-sizing: border-box; }
         .status-indicator { display: flex; align-items: center; gap: 6px; }
-
-        .pulse-dot-orange {
-            width: 8px; height: 8px;
-            background-color: var(--orange);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--orange);
-        }
-
-        .workspace-grid {
-            width: 100%; max-width: 1200px;
-            margin-top: 40px; padding: 12px;
-            box-sizing: border-box; display: grid;
-            grid-template-columns: 1fr; gap: 16px;
-        }
-
-        @media(min-width: 900px) { .workspace-grid { grid-template-columns: 1fr 1fr; } }
-
-        .panel-box {
-            background: rgba(7, 13, 25, 0.95);
-            border: 1px solid var(--border);
-            border-radius: 8px; overflow: hidden;
-            display: flex; flex-direction: column;
-        }
-
-        .panel-tab-bar {
-            background: #040812; padding: 0 12px; height: 36px;
-            display: flex; align-items: center; border-bottom: 1px solid var(--border);
-        }
-
+        .pulse-dot-orange { width: 8px; height: 8px; background-color: var(--orange); border-radius: 50%; box-shadow: 0 0 8px var(--orange); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(249, 115, 22, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } }
+        .workspace-grid { width: 100%; max-width: 1200px; margin: 0 auto; padding: 56px 12px 12px 12px; box-sizing: border-box; display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media(min-width: 900px) { .workspace-grid { grid-template-columns: 1.1fr 0.9fr; } }
+        .panel-box { background: rgba(7, 13, 25, 0.8); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; margin-bottom: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+        .panel-tab-bar { background: #040812; padding: 0 12px; height: 36px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
         .tab-pill { color: var(--cyan); font-family: 'Fira Code', monospace; font-size: 0.72rem; font-weight: 500; }
-
-        .terminal-viewport {
-            padding: 14px; background: var(--panel-inner);
-            font-family: 'Fira Code', monospace; font-size: 0.8rem;
-            line-height: 1.5; box-sizing: border-box; min-height: 280px;
-        }
-
+        .terminal-viewport { padding: 14px; background: var(--panel-inner); font-family: 'Fira Code', monospace; font-size: 0.8rem; line-height: 1.5; box-sizing: border-box; min-height: 280px; }
         .terminal-log-output { color: #cbd5e1; white-space: pre-wrap; word-break: break-all; }
         .input-row { display: flex; align-items: center; width: 100%; margin-top: 10px; }
         .terminal-prompt-tag { color: var(--purple); font-weight: bold; margin-right: 6px; }
         .terminal-input-field { background: transparent; border: none; outline: none; color: #ffffff; font-family: 'Fira Code', monospace; font-size: 0.8rem; width: 100%; }
-
         .telemetry-stack { padding: 14px; display: flex; flex-direction: column; gap: 12px; background: var(--panel-inner); box-sizing: border-box; }
         .chart-card { background: rgba(3, 7, 18, 0.6); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
         .chart-header-row { display: flex; justify-content: space-between; font-size: 0.7rem; font-family: 'Fira Code', monospace; color: var(--text-dim); margin-bottom: 8px; }
         .value-badge { font-weight: 700; }
-
+        .management-card { background: rgba(3, 7, 18, 0.4); border: 1px solid rgba(30, 41, 59, 0.6); border-radius: 6px; padding: 12px; font-family: 'Fira Code', monospace; font-size: 0.75rem; transition: all 0.3s ease; }
+        .management-card:hover { border-color: var(--cyan); background: rgba(14, 165, 233, 0.03); }
+        .mgmt-title { color: var(--cyan); font-weight: bold; font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .mgmt-stats { color: var(--text-dim); font-size: 0.7rem; margin: 4px 0 8px 0; }
+        .mgmt-desc { color: #cbd5e1; line-height: 1.4; }
+        .live-log-stream { background: #020408; border-radius: 4px; padding: 8px; font-size: 0.7rem; font-family: 'Fira Code', monospace; max-height: 95px; overflow-y: hidden; line-height: 1.45; border: 1px solid rgba(30, 41, 59, 0.5); }
         .svg-container-frame { width: 100%; height: 65px; background: #020409; border-radius: 4px; border: 1px solid rgba(30, 41, 59, 0.5); }
         .svg-globe-container-frame { width: 100%; height: 160px; background: #020409; border-radius: 4px; border: 1px solid rgba(30, 41, 59, 0.5); display: flex; align-items: center; justify-content: center; }
-
         .realtime-sys-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .mini-stat-node { background: rgba(7, 13, 25, 0.4); border: 1px solid rgba(30, 41, 59, 0.4); border-radius: 4px; padding: 6px 8px; font-size: 0.68rem; font-family: 'Fira Code', monospace; display: flex; justify-content: space-between; }
-
         @keyframes rotateEarthMap { 0% { transform: translateX(0px); } 100% { transform: translateX(-150px); } }
         @keyframes orbitSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .earth-outline { stroke: var(--cyan); stroke-width: 1.5; fill: none; }
-        .earth-grid-lines { fill: none; stroke: rgba(14, 165, 233, 0.25); stroke-width: 0.8; }
-        .continents-layer { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; animation: rotateEarthMap 12s linear infinite; }
-        .satellite-orbit { fill: none; stroke: rgba(168, 85, 247, 0.4); stroke-width: 1; stroke-dasharray: 4 4; transform-origin: 100px 80px; animation: orbitSpin 15s linear infinite; }
-
+        .earth-grid-lines { fill: none; stroke: rgba(14, 165, 233, 0.15); stroke-width: 0.8; }
+        .continents-layer { fill: none; stroke: var(--cyan); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; animation: rotateEarthMap 16s linear infinite; }
+        .satellite-orbit { fill: none; stroke: rgba(168, 85, 247, 0.3); stroke-width: 1; stroke-dasharray: 4 4; transform-origin: 100px 80px; animation: orbitSpin 20s linear infinite; }
         .neofetch-layout { display: flex; gap: 12px; margin: 8px 0; font-size: 0.75rem; }
         .neofetch-logo { color: var(--cyan); font-weight: bold; line-height: 1.2; }
-
-        .c-cyan { color: var(--cyan); }
-        .c-purple { color: var(--purple); }
-        .c-green { color: var(--green); }
-        .c-orange { color: var(--orange); }
-        .c-red { color: var(--red); }
-        .c-dim { color: var(--text-dim); }
+        .c-cyan { color: var(--cyan); } .c-purple { color: var(--purple); } .c-green { color: var(--green); } .c-orange { color: var(--orange); } .c-red { color: var(--red); } .c-dim { color: var(--text-dim); }
     </style>
 </head>
 <body>
-
     <div class="status-header-bar">
-        <div class="status-indicator">
-            <span class="pulse-dot-orange"></span>
-            <span>Status: <span class="c-orange">Developing Discord Moderation Bot</span></span>
-        </div>
+        <div class="status-indicator"><span class="pulse-dot-orange"></span><span>Subsystem Node: <span class="c-cyan">anishpoojary2011-debug</span></span></div>
         <span id="system-clock-panel">00:00:00 PM</span>
     </div>
-
     <div class="workspace-grid">
-        <div class="panel-box">
-            <div class="panel-tab-bar"><div class="tab-pill">bash_terminal.sh</div></div>
-            <div class="terminal-viewport" onclick="document.getElementById('console-terminal-typer').focus()">
-                <div class="terminal-log-output" id="console-log-history">Welcome to the real-time node.
-Active Project: Discord Moderation Engineering.
-Type <span class="c-cyan">'help'</span> for operations.</div>
-                <div class="input-row">
-                    <span class="terminal-prompt-tag">anish@gateway:~$</span>
-                    <input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off">
+        <div>
+            <div class="panel-box">
+                <div class="panel-tab-bar"><div class="tab-pill">interactive_shell.sh</div></div>
+                <div class="terminal-viewport" onclick="document.getElementById('console-terminal-typer').focus()">
+                    <div class="terminal-log-output" id="console-log-history">Core system architecture loaded successfully.
+All production cluster links verified.
+Type <span class="c-cyan">'help'</span> to unlock interactive subroutines.</div>
+                    <div class="input-row"><span class="terminal-prompt-tag">anish@gateway:~$</span><input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off"></div>
+                </div>
+            </div>
+            <div class="panel-box">
+                <div class="panel-tab-bar"><div class="tab-pill">managed_infrastructure.log</div></div>
+                <div class="telemetry-stack">
+                    <div class="management-card">
+                        <div class="mgmt-title"><span>🌐 Gaming & Community Nexus</span><span class="c-green">ONLINE</span></div>
+                        <div class="mgmt-stats">Role: Infrastructure Lead | Volume: 5,000+ Active Accounts</div>
+                        <div class="mgmt-desc">> Engineered advanced token-verification entry tunnels, anti-raid custom automated firewalls, and stylized webhook logging layouts.</div>
+                    </div>
+                    <div class="management-card">
+                        <div class="mgmt-title"><span>🤖 Automation Engine Node</span><span class="c-purple">RUNNING</span></div>
+                        <div class="mgmt-stats">Role: Principal Bot Architect | Scope: Custom Scripting</div>
+                        <div class="mgmt-desc">> Programmed secure ticket-routing frameworks, automated moderation triggers, and background analytics metric tracking dashboards.</div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header-row"><span>Background Kernel Pipeline</span><span class="c-orange" style="font-size:0.65rem; font-weight:bold;">● LIVE DATA PIPING</span></div>
+                        <div class="live-log-stream" id="live-logger-box">
+                            <div class="c-dim">[12:00:01] Activating cloudflare edge proxy rules...</div>
+                            <div class="c-dim">[12:00:04] Dynamic cluster monitoring loop running stably.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="panel-box">
-            <div class="panel-tab-bar"><div class="tab-pill">telemetry.conf</div></div>
+            <div class="panel-tab-bar"><div class="tab-pill">telemetry_matrix.conf</div></div>
             <div class="telemetry-stack">
                 <div class="chart-card">
-                    <div class="chart-header-row"><span>Global Earth Core Gateway</span><span class="value-badge c-cyan">ONLINE</span></div>
+                    <div class="chart-header-row"><span>Global Edge Routing Map</span><span class="value-badge c-cyan">CORE ONLINE</span></div>
                     <div class="svg-globe-container-frame">
                         <svg viewBox="0 0 200 160" width="100%" height="100%">
                             <defs><mask id="earth-mask"><circle cx="100" cy="80" r="48" fill="#ffffff" /></mask></defs>
@@ -168,118 +122,86 @@ Type <span class="c-cyan">'help'</span> for operations.</div>
                     </div>
                 </div>
                 <div class="realtime-sys-grid">
-                    <div class="mini-stat-node"><span>CPU:</span><span class="c-green" id="stat-cpu">12.4%</span></div>
-                    <div class="mini-stat-node"><span>PACKETS:</span><span class="c-cyan" id="stat-packets">1,420/s</span></div>
+                    <div class="mini-stat-node"><span>CPU PERFORMANCE:</span><span class="c-green" id="stat-cpu">8.4%</span></div>
+                    <div class="mini-stat-node"><span>TRAFFIC PORTS:</span><span class="c-cyan" id="stat-packets">1,310/s</span></div>
                 </div>
-                 <div class="chart-card">
-                    <div class="chart-header-row"><span>Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.40 ms</span></div>
-                    <div class="svg-container-frame">
-                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
-                            <path id="svg-latency-line" d="M 0 40 Q 75 20 150 50 T 300 30" fill="none" stroke="var(--cyan)" stroke-width="2" />
-                        </svg>
-                    </div>
-                </div>
-                
                 <div class="chart-card">
-                    <div class="chart-header-row"><span>Memory Heap</span><span class="value-badge c-purple" id="heap-txt">14.20 MB</span></div>
-                    <div class="svg-container-frame">
-                        <svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none">
-                            <path id="svg-heap-line" d="M 0 30 Q 75 50 150 20 T 300 40" fill="none" stroke="var(--purple)" stroke-width="2" />
-                        </svg>
-                    </div>
+                    <div class="chart-header-row"><span>API Execution Delay</span><span class="value-badge c-cyan" id="latency-txt">0.24 ms</span></div>
+                    <div class="svg-container-frame"><svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none"><path id="svg-latency-line" d="M 0 40 Q 75 20 150 50 T 300 30" fill="none" stroke="var(--cyan)" stroke-width="2" /></svg></div>
                 </div>
-
+                <div class="chart-card">
+                    <div class="chart-header-row"><span>Server Dynamic Memory Heap</span><span class="value-badge c-purple" id="heap-txt">14.12 MB</span></div>
+                    <div class="svg-container-frame"><svg viewBox="0 0 300 65" width="100%" height="100%" preserveAspectRatio="none"><path id="svg-heap-line" d="M 0 30 Q 75 50 150 20 T 300 40" fill="none" stroke="var(--purple)" stroke-width="2" /></svg></div>
+                </div>
             </div>
         </div>
     </div>
-
     <script>
         const logHistory = document.getElementById('console-log-history');
         const terminalTyper = document.getElementById('console-terminal-typer');
         const clockPanel = document.getElementById('system-clock-panel');
-
+        const loggerBox = document.getElementById('live-logger-box');
         setInterval(() => { clockPanel.textContent = new Date().toLocaleTimeString(); }, 1000);
-
+        const runningSystemEvents = [
+            "Handshake protocol parameters parsed securely.",
+            "Wiping internal route processing frame cache...",
+            "Inbound gateway load balancing socket verified.",
+            "Sync confirmation package acknowledged by main database.",
+            "Regenerating edge routing encryption keys..."
+        ];
         setInterval(() => {
-            document.getElementById('stat-cpu').innerText = (Math.random() * 10 + 5).toFixed(1) + '%';
-            document.getElementById('stat-packets').innerText = Math.floor(Math.random() * 200 + 1200).toLocaleString() + '/s';
-            
-            let lat = (Math.random() * 0.8 + 0.2);
-            let mem = (12.1 + Math.random() * 1.5);
+            document.getElementById('stat-cpu').innerText = (Math.random() * 5 + 6).toFixed(1) + '%';
+            document.getElementById('stat-packets').innerText = Math.floor(Math.random() * 110 + 1380).toLocaleString() + '/s';
+            let lat = (Math.random() * 0.15 + 0.20); let mem = (14.22 + Math.random() * 0.45);
             document.getElementById('latency-txt').innerText = lat.toFixed(2) + ' ms';
             document.getElementById('heap-txt').innerText = mem.toFixed(2) + ' MB';
-
-            let p1 = Math.floor(Math.random() * 25 + 15);
-            let p2 = Math.floor(Math.random() * 25 + 25);
-            let p3 = Math.floor(Math.random() * 25 + 15);
+            let p1 = Math.floor(Math.random() * 20 + 20), p2 = Math.floor(Math.random() * 25 + 20), p3 = Math.floor(Math.random() * 20 + 20);
             document.getElementById('svg-latency-line').setAttribute('d', `M 0 ${p1} Q 75 ${p2} 150 ${p3} T 300 ${p1}`);
-
-            let h1 = Math.floor(Math.random() * 20 + 25);
-            let h2 = Math.floor(Math.random() * 20 + 15);
-            let h3 = Math.floor(Math.random() * 20 + 25);
+            let h1 = Math.floor(Math.random() * 15 + 30), h2 = Math.floor(Math.random() * 15 + 20), h3 = Math.floor(Math.random() * 15 + 30);
             document.getElementById('svg-heap-line').setAttribute('d', `M 0 ${h1} Q 75 ${h2} 150 ${h3} T 300 ${h2}`);
+            if (Math.random() > 0.6) {
+                let timeToken = new Date().toLocaleTimeString().split(' ')[0];
+                let eventText = runningSystemEvents[Math.floor(Math.random() * runningSystemEvents.length)];
+                loggerBox.innerHTML += `<div class="c-dim">[${timeToken}] ${eventText}</div>`;
+                if (loggerBox.children.length > 5) loggerBox.removeChild(loggerBox.children[0]);
+                loggerBox.scrollTop = loggerBox.scrollHeight;
+            }
         }, 1000);
-
         const virtualFS = {
-            "about.txt": "Experienced Server Manager and Community Infrastructure Architect.",
-            "skills.md": "- Discord Automation & Webhooks<br>- Anti-Raid System Integration",
-            "socials.env": "Insta: @__miku._.chan_<br>Discord: @anish"
+            "about.txt": "Anish Poojary - Community Systems Architect & Advanced Infrastructure Engineer.",
+            "skills.md": "- Distributed Layer 7 Anti-Raid Firewalls<br>- Automated Webhook Matrix Logging<br>- Linux Node Configuration & Port Tuning",
+            "socials.env": "Instagram: @__miku._.chan_<br>Discord ID: @anish"
         };
-
         terminalTyper.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
-                const cmd = terminalTyper.value.trim();
-                if (!cmd) return;
-
-                logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${cmd}`;
-                terminalTyper.value = '';
-
-                const args = cmd.split(' ');
-                const base = args[0].toLowerCase();
-                const param = args.slice(1).join(' ').toLowerCase();
-
+                const cmd = terminalTyper.value.trim(); if (!cmd) return;
+                logHistory.innerHTML += `\n<span class="c-purple">anish@gateway:~$</span> ${cmd}`; terminalTyper.value = '';
+                const args = cmd.split(' '); const base = args[0].toLowerCase(); const param = args.slice(1).join(' ').toLowerCase();
                 if (base === 'help') {
-                    logHistory.innerHTML += `\nCommands: <span class="c-cyan">ls</span>, <span class="c-cyan">cat</span>, <span class="c-cyan">secure</span>, <span class="c-cyan">neofetch</span>, <span class="c-cyan">social</span>, <span class="c-cyan">clear</span>`;
+                    logHistory.innerHTML += `\nCommands: <span class="c-cyan">ls</span>, <span class="c-cyan">cat</span>, <span class="c-cyan">ping</span>, <span class="c-cyan">uptime</span>, <span class="c-cyan">secure</span>, <span class="c-cyan">neofetch</span>, <span class="c-cyan">social</span>, <span class="c-cyan">clear</span>`;
                 } else if (base === 'ls') {
                     logHistory.innerHTML += `\n` + Object.keys(virtualFS).join('   ');
                 } else if (base === 'cat') {
-                    if (virtualFS[param]) {
-                        logHistory.innerHTML += `\n` + virtualFS[param];
-                    } else {
-                        logHistory.innerHTML += `\nUnknown file. Try 'cat about.txt'`;
-                    }
+                    logHistory.innerHTML += `\n` + (virtualFS[param] || "Target script error. Usage: 'cat about.txt'");
+                } else if (base === 'ping') {
+                    logHistory.innerHTML += `\n64 bytes from root-gateway.local: icmp_seq=1 ttl=64 time=${(Math.random() * 5 + 3).toFixed(1)} ms\n64 bytes from root-gateway.local: icmp_seq=2 ttl=64 time=${(Math.random() * 5 + 3).toFixed(1)} ms`;
+                } else if (base === 'uptime') {
+                    logHistory.innerHTML += `\ngateway-cluster status: ACTIVE\nUptime runtime logs: 24 Days, 11 Hours, 42 Minutes`;
                 } else if (base === 'secure') {
-                    logHistory.innerHTML += `\n<span class="c-cyan">[!] Scanning Gateway Infrastructure...</span>\nFilters: <span class="c-green">ACTIVE</span>\nAutomated Moderation Triaging: <span class="c-green">ONLINE</span>`;
+                    logHistory.innerHTML += `\n<span class="c-cyan">[!] Initializing global audit trace...</span>\nCluster Integrity: <span class="c-green">OPTIMAL</span>\nRate-Limit Matrices: <span class="c-green">ACTIVE</span>`;
                 } else if (base === 'neofetch') {
-                    logHistory.innerHTML += `
-<div class="neofetch-layout">
-<div class="neofetch-logo">
-  __ _ _ __ (_)___| |__  
- / _\` | '_ \\| / __| '_ \\ 
-| (_| | | | | \\__ \\ | | |
- \\__,_|_| |_|_|___/_       |_|
-</div>
-<div>
-<span class="c-cyan">anish@production-gateway</span><br>
------------------------<br>
-<span class="c-purple">Project:</span> Discord Mod Engine<br>
-<span class="c-purple">Shell:</span> Mock Bash Client v7.5<br>
-<span class="c-purple">Status:</span> Layout Core Stable
-</div>
-</div>`;
+                    logHistory.innerHTML += `\n<div class="neofetch-layout"><div class="neofetch-logo">  __ _ _ __\n / _\` | '_ \\\n| (_| | | | |\n \\__,_|_| |_|</div><div><span class="c-cyan">anish@production-gateway</span><br>-----------------------<br><span class="c-purple">OS:</span> Core-Linux Cloud Engine v5.1<br><span class="c-purple">Shell:</span> Bash Interactive Interpreter<br><span class="c-purple">Uptime:</span> 24 Days Active</div></div>`;
                 } else if (base === 'social') {
-                    logHistory.innerHTML += `\nBridging redirect gateway...`;
+                    logHistory.innerHTML += `\nOpening high-speed tunnel redirection to invite hub...`;
                     setTimeout(() => { window.location.href = "https://discord.gg/CeUSuRZ9G"; }, 500);
                 } else if (base === 'clear') {
-                    logHistory.innerHTML = 'Logs cleared.';
+                    logHistory.innerHTML = 'All active session view history buffers flushed.';
                 } else {
-                    logHistory.innerHTML += `\nbash: unrecognized operation: '${base}'`;
+                    logHistory.innerHTML += `\nbash: script token unrecognized: '${base}'`;
                 }
-                
                 window.scrollTo(0, document.body.scrollHeight);
             }
         });
-
         document.addEventListener('click', () => { terminalTyper.focus(); });
     </script>
 </body>
