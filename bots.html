@@ -1,0 +1,89 @@
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Discord Bots</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #5865F2; /* Discord Blue */
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .bot-card {
+            background-color: #2c2f33;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-left: 5px solid #5865F2;
+        }
+        .bot-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .status-badge {
+            background-color: #43b581; /* Discord Green */
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        .bot-desc {
+            color: #b9bbbe;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            color: #ffffff;
+            text-decoration: none;
+            background-color: #4f545c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background-color: #72767d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🤖 My Custom Projects</h1>
+        
+        <div class="bot-card">
+            <div class="bot-name">
+                ShieldGuard Anti-Nuke 
+                <span class="status-badge">Active</span>
+            </div>
+            <div class="bot-desc">
+                A high-security administrative defense bot built using Node.js and Discord.js. It monitors audit logs to detect mass channel deletions or malicious staff activity, instantly stripping administrative roles within a rolling 10-second window to protect the server structure.
+            </div>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to Main Page</a>
+    </div>
+
+</body>
+</html>
+

@@ -3,313 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anish@production-node:~</title>
+    <title>Welcome to My Portfolio</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --bg: #110f18;             
-            --panel: #1c1926;          
-            --panel-inner: #15131e;    
-            --border: #3d3755;         
-            --cyan: #a277ff;           
-            --purple: #ff675c;         
-            --green: #61ffca;          
-            --orange: #ffca85;         
-            --magenta: #f694ff;        
-            --text: #edecee;           
-            --text-dim: #5d567f;       
+        body {
+            background-color: #0f0f11;
+            color: #e4e4e7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
         }
-        
-        body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        .status-header-bar { width: 100%; height: 40px; background: #15131e; border-bottom: 1px solid var(--border); position: fixed; top: 0; left: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 0.72rem; font-family: 'Fira Code', monospace; color: var(--text-dim); box-sizing: border-box; }
-        .status-indicator { display: flex; align-items: center; gap: 6px; }
-        .pulse-dot-green { width: 8px; height: 8px; background-color: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green); }
-        
-        .workspace-grid { width: 100%; max-width: 1200px; margin: 0 auto; padding: 52px 12px 12px 12px; box-sizing: border-box; display: grid; grid-template-columns: 1fr; gap: 14px; }
-        @media(min-width: 900px) { .workspace-grid { grid-template-columns: 1.15fr 0.85fr; } }
-        
-        .panel-box { background: rgba(28, 25, 38, 0.9); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; margin-bottom: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.6); }
-        .panel-title-strip { background: #15131e; padding: 0 12px; height: 34px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); font-family: 'Fira Code', monospace; font-size: 0.72rem; color: var(--cyan); }
-        
-        .terminal-viewport { padding: 14px; background: var(--panel-inner); font-family: 'Fira Code', monospace; font-size: 0.78rem; line-height: 1.5; min-height: 260px; box-sizing: border-box; display: flex; flex-direction: column; }
-        .terminal-log-output { color: #edecee; white-space: pre-wrap; word-break: break-all; flex-grow: 1; overflow-y: auto; max-height: 280px; }
-        .input-row { display: flex; align-items: center; width: 100%; margin-top: 8px; }
-        .terminal-prompt-tag { color: var(--magenta); font-weight: bold; margin-right: 6px; white-space: nowrap; }
-        .terminal-input-field { background: transparent; border: none; outline: none; color: #ffffff; font-family: 'Fira Code', monospace; font-size: 0.78rem; width: 100%; }
-        
-        .telemetry-stack { padding: 12px; display: flex; flex-direction: column; gap: 10px; background: var(--panel-inner); }
-        .chart-card { background: rgba(17, 15, 24, 0.7); border: 1px solid var(--border); border-radius: 6px; padding: 10px; }
-        .chart-header-row { display: flex; justify-content: space-between; font-size: 0.68rem; font-family: 'Fira Code', monospace; color: var(--text-dim); margin-bottom: 6px; }
-        
-        .project-matrix-menu { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 4px; }
-        .matrix-btn { background: #15131e; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Fira Code', monospace; font-size: 0.7rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-        .matrix-btn.active-node { border-color: var(--cyan); color: var(--cyan); background: rgba(162, 119, 255, 0.08); box-shadow: 0 0 8px rgba(162, 119, 255, 0.2); }
-        
-        .management-card { background: rgba(21, 19, 30, 0.5); border: 1px solid var(--border); border-radius: 6px; padding: 14px; font-family: 'Fira Code', monospace; font-size: 0.75rem; }
-        .mgmt-title { color: var(--cyan); font-weight: bold; font-size: 0.82rem; display: flex; justify-content: space-between; }
-        .mgmt-stats { color: var(--text-dim); font-size: 0.68rem; margin: 4px 0 8px 0; }
-        .mgmt-desc { color: #edecee; line-height: 1.4; min-height: 60px; }
-        
-        .action-link-btn { display: inline-flex; align-items: center; margin-top: 12px; background: var(--panel-inner); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; color: #ffffff; font-size: 0.72rem; text-decoration: none; font-family: 'Fira Code', monospace; transition: all 0.2s; width: fit-content; cursor: pointer; }
-        .action-link-btn:hover { background: var(--cyan); color: #110f18; font-weight: bold; border-color: var(--cyan); box-shadow: 0 0 12px rgba(162, 119, 255, 0.4); }
-        
-        .live-log-stream { background: #110f18; border-radius: 4px; padding: 8px; font-size: 0.65rem; font-family: 'Fira Code', monospace; max-height: 90px; overflow-y: hidden; border: 1px solid var(--border); line-height: 1.4; }
-        .svg-container-frame { width: 100%; height: 52px; background: #110f18; border-radius: 4px; border: 1px solid rgba(61, 55, 85, 0.5); }
-        .svg-globe-container-frame { width: 100%; height: 140px; background: #110f18; border-radius: 4px; border: 1px solid rgba(61, 55, 85, 0.5); display: flex; align-items: center; justify-content: center; }
-        
-        .realtime-sys-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .mini-stat-node { background: rgba(28, 25, 38, 0.5); border: 1px solid rgba(61, 55, 85, 0.5); border-radius: 4px; padding: 6px 8px; font-size: 0.68rem; font-family: 'Fira Code', monospace; display: flex; justify-content: space-between; }
-        
-        @keyframes rotateEarthMap { 0% { transform: translateX(0px); } 100% { transform: translateX(-150px); } }
-        @keyframes orbitSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .earth-outline { stroke: var(--cyan); stroke-width: 1.2; fill: none; opacity: 0.8; }
-        .earth-grid-lines { fill: none; stroke: rgba(162, 119, 255, 0.15); stroke-width: 0.8; }
-        .continents-layer { fill: none; stroke: var(--green); stroke-width: 1.2; animation: rotateEarthMap 18s linear infinite; }
-        .satellite-orbit { fill: none; stroke: rgba(246, 148, 255, 0.3); stroke-width: 1; stroke-dasharray: 4 4; transform-origin: 100px 80px; animation: orbitSpin 22s linear infinite; }
-        .c-cyan { color: var(--cyan); } .c-purple { color: var(--purple); } .c-green { color: var(--green); } .c-dim { color: var(--text-dim); } .c-magenta { color: var(--magenta); }
+        .main-card {
+            background: #18181b;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            border: 1px solid #27272a;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #a1a1aa;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #5865F2; /* Modern Blue */
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn:hover {
+            background-color: #4752c4;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-    <div class="status-header-bar">
-        <div class="status-indicator"><span class="pulse-dot-green"></span><span>Aura Engine: <span class="c-green">Operational</span></span></div>
-        <span id="system-clock-panel">00:00:00 PM</span>
-    </div>
 
-    <div class="workspace-grid">
-        <div>
-            <div class="panel-box">
-                <div class="panel-title-strip"><span>interactive_shell.sh</span><span class="c-dim">tty1</span></div>
-                <div class="terminal-viewport" onclick="document.getElementById('console-terminal-typer').focus()">
-                    <div class="terminal-log-output" id="console-log-history">Loading Aura secure cluster authorization lines...</div>
-                    <div class="input-row" id="terminal-input-container" style="display:none;"><span class="terminal-prompt-tag" id="prompt-label">anish@gateway:~$</span><input type="text" class="terminal-input-field" id="console-terminal-typer" autofocus autocomplete="off"></div>
-                </div>
-            </div>
-            
-            <div class="panel-box">
-                <div class="panel-title-strip"><span>managed_infrastructure.log</span><span class="c-green">SYNCED</span></div>
-                <div class="telemetry-stack">
-                    <div class="project-matrix-menu">
-                        <button class="matrix-btn active-node" onclick="loadProjectNode('nexus', this)">01 // GAMING_NEXUS</button>
-                        <button class="matrix-btn" onclick="loadProjectNode('bot', this)">02 // AUTOMATION_ENGINE</button>
-                        <button class="matrix-btn" onclick="loadProjectNode('proxy', this)">03 // NETWORK_PROXY</button>
-                    </div>
-
-                    <div class="management-card">
-                        <div class="mgmt-title"><span id="node-title">🌐 Gaming & Community Nexus</span><span class="c-green" id="node-badge">ONLINE</span></div>
-                        <div class="mgmt-stats" id="node-meta">Role: Infrastructure Lead | Volume: 5,000+ Accounts</div>
-                        <div class="mgmt-desc" id="node-body">> Engineered advanced token-verification entry tunnels, anti-raid firewalls, and webhook maps.</div>
-                        
-                        <a href="https://discord.gg/CeUSuRZ9G" id="node-link" class="action-link-btn">Establish Connection Gateway →</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel-box">
-            <div class="panel-title-strip"><span>telemetry_matrix.conf</span><span class="c-cyan">MONITOR</span></div>
-            <div class="telemetry-stack">
-                <div class="chart-card">
-                    <div class="chart-header-row"><span>Global Edge Routing Map</span><span class="c-magenta" style="font-weight:bold;">CORE ONLINE</span></div>
-                    <div class="svg-globe-container-frame">
-                        <svg viewBox="0 0 200 160" width="100%" height="100%">
-                            <defs><mask id="earth-mask"><circle cx="100" cy="80" r="45" fill="#ffffff" /></mask></defs>
-                            <circle cx="100" cy="80" r="53" class="satellite-orbit" />
-                            <circle cx="100" cy="80" r="45" class="earth-outline" />
-                            <line x1="55" y1="80" x2="145" y2="80" class="earth-grid-lines" />
-                            <ellipse cx="100" cy="80" rx="20" ry="45" class="earth-grid-lines" />
-                            <g mask="url(#earth-mask)"><g class="continents-layer">
-                                <path d="M70,50 Q80,45 85,55 T100,50 T115,65 T100,85 Z" />
-                                <path d="M110,90 Q120,80 130,95 T140,110 Z" />
-                                <path d="M220,50 Q230,45 235,55 T250,50 T265,65 Z" />
-                            </g></g>
-                            <circle cx="95" cy="65" r="2" fill="var(--green)" />
-                            <circle cx="120" cy="90" r="2" fill="var(--cyan)" />
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="realtime-sys-grid">
-                    <div class="mini-stat-node"><span>CPU SYSTEM LOAD:</span><span class="c-green" id="stat-cpu">1.8%</span></div>
-                    <div class="mini-stat-node"><span>PORT OVERHEAD:</span><span class="c-cyan" id="stat-packets">1,240/s</span></div>
-                </div>
-                
-                <div class="chart-card">
-                    <div class="chart-header-row"><span>API Execution Variance</span><span class="c-cyan" id="latency-txt">0.22 ms</span></div>
-                    <div class="svg-container-frame"><svg viewBox="0 0 300 50" width="100%" height="100%" preserveAspectRatio="none"><path id="svg-latency-line" d="M 0 25 Q 75 15 150 35 T 300 20" fill="none" stroke="var(--cyan)" stroke-width="1.5" /></svg></div>
-                </div>
-                
-                <div class="chart-card">
-                    <div class="chart-header-row"><span>Background Kernel Pipeline</span><span class="c-orange" style="font-size:0.65rem; font-weight:bold;">● LIVE DATA PIPING</span></div>
-                    <div class="live-log-stream" id="live-logger-box">
-                        <div class="c-dim">[02:00:29] Initializing background verification threads...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const logHistory = document.getElementById('console-log-history');
-        const terminalTyper = document.getElementById('console-terminal-typer');
-        const loggerBox = document.getElementById('live-logger-box');
-        const promptLabel = document.getElementById('prompt-label');
-        const inputContainer = document.getElementById('terminal-input-container');
+    <div class="main-card">
+        <h1>Welcome! 👋</h1>
+        <p>This is my official development space where I build open-source scripts, custom software layouts, and server management networks.</p>
         
-        let commandHistory = [];
-        let historyIndex = -1;
-        let currentDir = "~";
+        <a href="bots.html" class="btn">Go to bots page</a>
+    </div>
 
-        const virtualFS = {
-            "~": { dirs: ["projects"], files: ["about_core.txt", "identity_manifest.env"] },
-            "~/projects": { dirs: [], files: ["gaming_nexus.md", "automation_engine.md", "network_proxy.conf"] }
-        };
-
-        const fileContents = {
-            "about_core.txt": "Systems engineer specializing in high-performance automation scripts and dashboard layouts.",
-            "identity_manifest.env": "OWNER=Anish\nROLE=Architect\nSTACK=JavaScript/Bash/Linux",
-            "gaming_nexus.md": "Configured advanced verification entry tunnels, firewalls, and stylized webhook data maps.",
-            "automation_engine.md": "Programmed ticket frameworks, moderator trigger events, and metric databases.",
-            "network_proxy.conf": "Configured edge proxy parameter rules, security handshake logic, and cluster tunnels."
-        };
-
-        const projectData = {
-            nexus: { title: "🌐 Gaming & Community Nexus", badge: "ONLINE", meta: "Role: Infrastructure Lead | Volume: 5,000+ Accounts", body: "> Engineered advanced token-verification entry tunnels, anti-raid firewalls, and webhook maps.", link: "https://discord.gg/CeUSuRZ9G", path: "gaming_nexus.md" },
-            bot: { title: "🤖 Automation Engine Node", badge: "RUNNING", meta: "Role: Bot Architect | Scope: Custom Scripting", body: "> Programmed secure ticket-routing frameworks, automated moderation triggers, and dashboard metrics.", link: "https://discord.gg/CeUSuRZ9G", path: "automation_engine.md" },
-            proxy: { title: "🛡️ Layer 7 Network Proxy Map", badge: "ENFORCED", meta: "Interface: Edge Subnet | Traffic: Multi-Core", body: "> Configured structural routing nodes, request filters, and direct integration logic protocols safely.", link: "https://discord.gg/CeUSuRZ9G", path: "network_proxy.conf" }
-        };
-
-        const bootSequenceLines = [
-            "Connecting to core aura-node encryption array...",
-            "[ OK ] Mounting layout kernel variables and namespace scopes.",
-            "[ OK ] Initializing active terminal workspace listeners.",
-            "Welcome to Anish's Production Aura Node Core System (v1.0.6-Aura)\nType 'help' or 'neofetch' to query active infrastructure nodes.\n"
-        ];
-
-        let bootIdx = 0;
-        function runBootEngine() {
-            if (bootIdx < bootSequenceLines.length) {
-                logHistory.innerHTML += (bootIdx === 0 ? "" : "\n") + bootSequenceLines[bootIdx];
-                bootIdx++;
-                setTimeout(runBootEngine, 300);
-            } else {
-                inputContainer.style.display = "flex";
-                terminalTyper.focus();
-            }
-            logHistory.scrollTop = logHistory.scrollHeight;
-        }
-        window.onload = runBootEngine;
-
-        function loadProjectNode(key, btn) {
-            document.querySelectorAll('.matrix-btn').forEach(b => b.classList.remove('active-node'));
-            btn.classList.add('active-node');
-            
-            const item = projectData[key];
-            document.getElementById('node-title').innerText = item.title;
-            document.getElementById('node-badge').innerText = item.badge;
-            document.getElementById('node-meta').innerText = item.meta;
-            document.getElementById('node-body').innerText = item.body;
-            document.getElementById('node-link').href = item.link;
-
-            currentDir = "~/projects";
-            promptLabel.innerText = `anish@gateway:${currentDir}$`;
-            logHistory.innerHTML += `\n<span class="c-magenta">anish@gateway:~$</span> cd projects && cat ${item.path}\n${fileContents[item.path]}`;
-            logHistory.scrollTop = logHistory.scrollHeight;
-        }
-
-        setInterval(() => { document.getElementById('system-clock-panel').textContent = new Date().toLocaleTimeString(); }, 1000);
-
-        const internalTickerLogs = [
-            "Secure WebSocket handshake verification parameters confirmed.",
-            "Flushing telemetry interface connection caches...",
-            "Gateway encryption signature synchronizing smoothly.",
-            "Piping fresh metric tracking packages directly to monitor UI."
-        ];
-
-        setInterval(() => {
-            document.getElementById('stat-cpu').innerText = (1.1 + Math.random() * 0.8).toFixed(1) + '%';
-            document.getElementById('stat-packets').innerText = Math.floor(Math.random() * 40 + 1230).toLocaleString() + '/s';
-            let lat = (Math.random() * 0.04 + 0.18); document.getElementById('latency-txt').innerText = lat.toFixed(2) + ' ms';
-            
-            let p1 = Math.floor(Math.random() * 10 + 20), p2 = Math.floor(Math.random() * 12 + 18), p3 = Math.floor(Math.random() * 10 + 20);
-            document.getElementById('svg-latency-line').setAttribute('d', `M 0 ${p1} Q 75 ${p2} 150 ${p3} T 300 ${p1}`);
-
-            if (Math.random() > 0.8) {
-                let time = new Date().toLocaleTimeString().split(' ')[0];
-                loggerBox.innerHTML += `<div class="c-dim">[${time}] ${internalTickerLogs[Math.floor(Math.random() * internalTickerLogs.length)]}</div>`;
-                if (loggerBox.children.length > 5) loggerBox.removeChild(loggerBox.children[0]);
-                loggerBox.scrollTop = loggerBox.scrollHeight;
-            }
-        }, 1000);
-
-        terminalTyper.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    terminalTyper.value = commandHistory[commandHistory.length - 1 - historyIndex];
-                } else if (historyIndex === 0) {
-                    historyIndex = -1;
-                    terminalTyper.value = '';
-                }
-            } else if (e.key === 'Enter') {
-                const inputLine = terminalTyper.value.trim(); if (!inputLine) return;
-                logHistory.innerHTML += `\n<span class="c-magenta">anish@gateway:${currentDir}$</span> ${inputLine}`;
-                terminalTyper.value = '';
-                
-                commandHistory.push(inputLine);
-                historyIndex = -1;
-
-                const tokens = inputLine.split(' ');
-                const cmd = tokens[0].toLowerCase();
-                const target = tokens.slice(1).join(' ');
-
-                if (cmd === 'help') {
-                    logHistory.innerHTML += `\nAvailable parameters: <span class="c-cyan">ls</span>, <span class="c-cyan">cd</span>, <span class="c-cyan">cat</span>, <span class="c-cyan">neofetch</span>, <span class="c-cyan">ping</span>, <span class="c-cyan">clear</span>`;
-                } else if (cmd === 'ls') {
-                    let dStr = virtualFS[currentDir].dirs.map(d => `<span class="c-cyan">${d}/</span> `).join('');
-                    let fStr = virtualFS[currentDir].files.join('   ');
-                    logHistory.innerHTML += `\n${dStr}${fStr}`;
-                } else if (cmd === 'cd') {
-                    if (!target || target === '~' || (currentDir === '~/projects' && target === '..')) {
-                        currentDir = "~";
-                    } else if (currentDir === '~' && target === 'projects') {
-                        currentDir = "~/projects";
-                    } else {
-                        logHistory.innerHTML += `\nbash: cd: folder destination sequence could not resolve.`;
-                    }
-                    promptLabel.innerText = `anish@gateway:${currentDir}$`;
-                } else if (cmd === 'cat') {
-                    if (virtualFS[currentDir].files.includes(target) && fileContents[target]) {
-                        logHistory.innerHTML += `\n${fileContents[target]}`;
-                    } else {
-                        logHistory.innerHTML += `\nbash: cat: file node completely invalid or unreadable inside scope.`;
-                    }
-                } else if (cmd === 'neofetch') {
-                    logHistory.innerHTML += `\n<span class="c-cyan">   /\\_/\\   </span>    <span class="c-magenta">anish@aura-production-node</span>\n<span class="c-cyan">  ( o.o )  </span>    --------------------------\n<span class="c-cyan">   > ^ <   </span>    OS: Debian GNU/Linux 12 (bookworm)\n               Kernel: x86_64 Linux 6.1.0-aura\n               Uptime: 5 days, 4 hours, 12 mins\n               Shell: bash 5.2.15 (Aura edition)\n               Terminal: tty1 core_subsystem\n               CPU: Aura Custom High-Compute Grid (4)\n               Memory: 1840MB / 4096MB`;
-                } else if (cmd === 'ping') {
-                    let count = 0;
-                    const pingInterval = setInterval(() => {
-                        logHistory.innerHTML += `\n64 bytes from aura-core.edge: icmp_seq=${count} ttl=64 time=${(12.4 + Math.random()*0.9).toFixed(1)} ms`;
-                        logHistory.scrollTop = logHistory.scrollHeight;
-                        count++;
-                        if (count >= 3) clearInterval(pingInterval);
-                    }, 300);
-                } else if (cmd === 'clear') {
-                    logHistory.innerHTML = 'Session logging metrics truncated successfully.';
-                } else {
-                    logHistory.innerHTML += `\nbash: command tracking sequence failed for token: '${cmd}'`;
-                }
-                setTimeout(() => { logHistory.scrollTop = logHistory.scrollHeight; }, 20);
-            }
-        });
-        document.addEventListener('click', () => { terminalTyper.focus(); });
-    </script>
 </body>
 </html>
