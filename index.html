@@ -3,62 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Portfolio</title>
+    <title>Aura Engine: Operational</title>
     <style>
+        :root {
+            --bg-color: #0b0813;
+            --panel-bg: #130f22;
+            --border-color: #251b3d;
+            --text-main: #b5aed4;
+            --accent-green: #3ce6a5;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+        }
+
         body {
-            background-color: #0f0f11;
-            color: #e4e4e7;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            text-align: center;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
-        .main-card {
-            background: #18181b;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
-            border: 1px solid #27272a;
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
         }
-        h1 {
-            color: #ffffff;
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #a1a1aa;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #5865F2; /* Modern Blue */
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-green);
             font-weight: bold;
-            font-size: 1rem;
-            transition: background 0.2s, transform 0.1s;
         }
-        .btn:hover {
-            background-color: #4752c4;
-            transform: translateY(-2px);
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+
+        /* Panel Styles */
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            position: relative;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            color: #7c6f96;
+            font-size: 12px;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 5px;
+        }
+        .panel-title {
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        /* Interactive Shell */
+        .shell-line {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+        .prompt {
+            color: var(--accent-pink);
+            font-weight: bold;
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--text-main);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        /* Telemetry Map & Stats */
+        .map-box {
+            border: 1px solid var(--border-color);
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background: radial-gradient(circle, #1c1536 10%, transparent 80%);
+        }
+        .radar {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed var(--accent-purple);
+            border-radius: 50%;
+            position: relative;
+        }
+        .radar::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            top: 20px;
+            left: 40px;
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        .stat-val-green { color: var(--accent-green); }
+        .stat-val-purple { color: var(--accent-purple); }
+
+        /* Infrastructure / Connection Button Box */
+        .nexus-title {
+            color: #ffffff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .nexus-desc {
+            color: #7c6f96;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        /* Beautiful working link button to your bots page */
+        .action-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            border-color: var(--accent-purple);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+            transform: translateX(4px);
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <h1>Welcome! 👋</h1>
-        <p>This is my official development space where I build open-source scripts, custom software layouts, and server management networks.</p>
+    <div class="top-bar">
+        <div class="status-indicator">
+            <div class="dot"></div>
+            <span>Aura Engine: Operational</span>
+        </div>
+        <div style="color: #4a3b70;">2:25:12 AM</div>
+    </div>
+
+    <div class="grid-container">
         
-        <a href="bots.html" class="btn">Go to bots page</a>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">interactive_shell.sh</span>
+                    <span>tty1</span>
+                </div>
+                <div class="shell-line">Loading Aura secure cluster authorization lines ... Connecting to core aura-node encryption array...</div>
+                <div class="shell-line">[ OK ] Mounting layout kernel variables and namespace scopes.</div>
+                <div class="shell-line">[ OK ] Initializing active terminal workspace listeners.</div>
+                <div class="shell-line" style="color: #ffffff; margin-top: 10px;">Welcome to Anish's Production Aura Node Core System (v1.0.6-Aura)</div>
+                <div class="shell-line">Type 'help' or 'neofetch' to query active infrastructure nodes.</div>
+                <br>
+                <div class="shell-line">
+                    <span class="prompt">anish@gateway:~$</span> <span class="cursor"></span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">managed_infrastructure.log</span>
+                    <span style="color: var(--accent-green);">SYNCED</span>
+                </div>
+                <div class="nexus-title">
+                    <span>🌐</span> Gaming & Community Nexus 
+                    <span style="color: var(--accent-green); font-size: 11px; margin-left: auto;">ONLINE</span>
+                </div>
+                <div style="font-size: 12px; color: #5c507a; margin-bottom: 10px;">Role: Infrastructure Lead | Volume: 5,000+ Accounts</div>
+                <div class="nexus-desc">
+                    &gt; Engineered advanced token-verification entry tunnels, anti-raid firewalls, and webhook maps.
+                </div>
+                
+                <a href="bots.html" class="action-btn">Establish Connection Gateway →</a>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">telemetry_matrix.conf</span>
+                    <span>MONITOR</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px;">
+                    <span>Global Edge Routing Map</span>
+                    <span style="color: var(--accent-pink);">CORE ONLINE</span>
+                </div>
+                <div class="map-box">
+                    <div class="radar"></div>
+                </div>
+                <div class="stat-line">
+                    <span>CPU SYSTEM LOAD:</span>
+                    <span class="stat-val-green">1.1%</span>
+                </div>
+                <div class="stat-line">
+                    <span>PORT OVERHEAD:</span>
+                    <span class="stat-val-purple">1,255/s</span>
+                </div>
+                <div class="stat-line">
+                    <span>API Execution Variance:</span>
+                    <span style="color: #ffffff;">0.19 ms</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Background Kernel Pipeline</span>
+                    <span style="color: #7c6f96;">● LIVE DATA PIPING</span>
+                </div>
+                <div style="color: #5c507a; font-size: 12px; line-height: 1.4;">
+                    [02:00:29] Initializing background verification threads ...
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </body>
